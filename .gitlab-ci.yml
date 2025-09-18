@@ -1,0 +1,297 @@
+stages:
+  - build_kyc
+  - build_doc
+  - build_shell
+  - deploy
+  - clear_cdn_cache
+
+.docker_login:
+  before_script:
+    - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
+    - export CI_COMMIT_TAG="${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}"
+
+build_kyc:
+  extends: .docker_login
+  stage: build_kyc
+  only:
+    variables:
+      - $CI_COMMIT_TAG =~ /.*kyc-.*/
+      - $CI_COMMIT_BRANCH == 'develop'
+      #- $CI_COMMIT_BRANCH == 'main'
+    changes:
+      - apps/zarin-kyc/**/*
+  script:
+    - docker build --network=host --target=kyc
+      -f Dockerfile.kyc
+      --build-arg BUILD_VERSION=$CI_COMMIT_TAG
+      --build-arg SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN
+      --build-arg SENTRY_URL=https://sentry.zarinpal.com
+      --build-arg SENTRY_ORG=zarinpal
+      --build-arg SENTRY_PROJECT=javascript
+      -t $CI_REGISTRY_IMAGE/kyc:$CI_COMMIT_TAG .
+    - docker push $CI_REGISTRY_IMAGE/kyc:$CI_COMMIT_TAG
+  tags:
+    - Runner-Static
+
+build_shell:
+  extends: .docker_login
+  stage: build_shell
+  only:
+    variables:
+      - $CI_COMMIT_TAG =~ /.*shell-.*/
+      - $CI_COMMIT_BRANCH == 'develop'
+      - $CI_COMMIT_BRANCH == 'stage'
+      - $CI_COMMIT_BRANCH == 'develop-zb'
+      - $custom_branch_name == 'true'
+      #- $CI_COMMIT_BRANCH == 'main'
+    changes:
+      - apps/shell/**/*
+  script:
+    - |
+      # Simply use the branch that triggered the pipeline.
+      BRANCH="$CI_COMMIT_REF_NAME"
+      echo "Building branch: $BRANCH"
+    - |
+      # Determine the SANDBOX_NAME.
+      # Use a custom sandbox if provided; otherwise, set based on the branch.
+      if [ -n "$custom_branch_sandbox" ]; then
+        export SANDBOX_NAME="$custom_branch_sandbox"
+      else
+        if [ "$BRANCH" = "develop" ]; then
+          export SANDBOX_NAME="develop"
+        elif [ "$BRANCH" = "stage" ]; then
+          export SANDBOX_NAME="stage"
+        elif [ "$BRANCH" = "develop-zb" ]; then
+          export SANDBOX_NAME="develop"
+        else
+          export SANDBOX_NAME="production"
+        fi
+      fi
+      echo "Using SANDBOX_NAME: $SANDBOX_NAME"
+    - docker build --network=host --target=shell
+      -f Dockerfile.shell
+      --build-arg NUXT_SANDBOX_NAME=$SANDBOX_NAME
+      --build-arg BUILD_VERSION=$CI_COMMIT_TAG
+      -t $CI_REGISTRY_IMAGE/shell:$CI_COMMIT_TAG .
+    - docker push $CI_REGISTRY_IMAGE/shell:$CI_COMMIT_TAG
+  tags:
+    - Runner-Static
+
+build_doc:
+  extends: .docker_login
+  stage: build_doc
+  only:
+    variables:
+      - $CI_COMMIT_TAG =~ /.*docs-.*/
+      - $CI_COMMIT_BRANCH == 'develop'
+      #- $CI_COMMIT_BRANCH == 'main'
+    changes:
+      - apps/docs/**/*
+  script:
+    - docker build --network=host --target=docs
+      -f Dockerfile.docs
+      --build-arg BUILD_VERSION=$CI_COMMIT_TAG
+      -t $CI_REGISTRY_IMAGE/docs:$CI_COMMIT_TAG .
+    - docker push $CI_REGISTRY_IMAGE/docs:$CI_COMMIT_TAG
+  tags:
+    - Runner-Static
+
+.deploy_template: &deploy_template
+  image:
+    name: alpine/helm:3.5.3
+    entrypoint: ['']
+  script:
+    - export CI_COMMIT_TAG="${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}"
+    - mkdir -p $HOME/.kube
+    - echo $KUBE_CONFIG | base64 -d > $HOME/.kube/config
+    - chmod 600 $HOME/.kube/config
+    - helm repo add --username "gitlab-ci-token" --password "$CI_JOB_TOKEN" ${chart_name} ${CI_API_V4_URL}/projects/524/packages/helm/stable
+    - helm repo update
+    - helm search repo $CHART_NAME
+    - helm upgrade --install $RELEASE_NAME -n $NAMESPACE staticsite/staticsite --set image.tag=$CI_COMMIT_TAG --values $VALUES_PATH --timeout 30m0s
+
+deploy_demo_kyc:
+  <<: *deploy_template
+  variables:
+    KUBE_CONFIG: ${kube_config_demo}
+    RELEASE_NAME: ${project_name}-kyc
+    NAMESPACE: panel-monorepo
+    VALUES_PATH: ./deployment/demo/values-kyc.yaml
+  stage: deploy
+  tags:
+    - Runner-Static
+  only:
+    variables:
+      - $CI_COMMIT_BRANCH == 'develop'
+    changes:
+      - apps/zarin-kyc/**/*
+
+deploy_demo_shell:
+  <<: *deploy_template
+  variables:
+    KUBE_CONFIG: ${kube_config_demo}
+    RELEASE_NAME: ${project_name}-shell
+    NAMESPACE: panel-monorepo
+    VALUES_PATH: ./deployment/demo/values-shell.yaml
+  stage: deploy
+  tags:
+    - Runner-Static
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop" || $custom_branch_env == "develop"'
+      changes:
+        - apps/shell/**/*
+    - when: never
+
+deploy_demo_zb_shell:
+  <<: *deploy_template
+  variables:
+    KUBE_CONFIG: ${kube_config_demo}
+    RELEASE_NAME: ${project_name}-shell
+    NAMESPACE: panel-monorepo-demo-zb
+    VALUES_PATH: ./deployment/demo-zb/values-shell.yaml
+  stage: deploy
+  tags:
+    - Runner-Static
+  only:
+    variables:
+      - $CI_COMMIT_BRANCH == 'develop-zb'
+    changes:
+      - apps/shell/**/*
+
+deploy_demo_docs:
+  <<: *deploy_template
+  variables:
+    KUBE_CONFIG: ${kube_config_demo}
+    RELEASE_NAME: ${project_name}-docs
+    NAMESPACE: panel-monorepo
+    VALUES_PATH: ./deployment/demo/values-docs.yaml
+  stage: deploy
+  tags:
+    - Runner-Static
+  only:
+    variables:
+      - $CI_COMMIT_BRANCH == 'develop'
+    changes:
+      - apps/docs/**/*
+
+#deploy_stg_kyc:
+#  <<: *deploy_template
+#  variables:
+#    KUBE_CONFIG: ${kube_config}
+#    RELEASE_NAME: ${project_name}-kyc
+#    NAMESPACE: panel-monorepo-stg
+#    VALUES_PATH: ./deployment/stage/values-kyc.yaml
+#  stage: deploy
+#  tags:
+#    - Runner-Static
+#  only:
+#    variables:
+#      - $CI_COMMIT_BRANCH == 'main'
+#    changes:
+#      - apps/zarin-kyc/**/*
+
+#deploy_stg_docs:
+#  <<: *deploy_template
+#  variables:
+#    KUBE_CONFIG: ${kube_config}
+#    RELEASE_NAME: ${project_name}-docs
+#    NAMESPACE: panel-monorepo-stg
+#    VALUES_PATH: ./deployment/stage/values-docs.yaml
+#  stage: deploy
+#  tags:
+#    - Runner-Static
+#  only:
+#    variables:
+#      - $CI_COMMIT_BRANCH == 'main'
+#    changes:
+#      - apps/docs/**/*
+
+deploy_stg_shell:
+  <<: *deploy_template
+  variables:
+    KUBE_CONFIG: ${kube_config_prod}
+    RELEASE_NAME: ${project_name}-shell
+    NAMESPACE: panel-monorepo-stg
+    VALUES_PATH: ./deployment/stage/values-shell.yaml
+  stage: deploy
+  tags:
+    - Runner-Static
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "stage" || $custom_branch_env == "stage"'
+      changes:
+        - apps/shell/**/*
+    - when: never
+
+deploy_prod_kyc:
+  <<: *deploy_template
+  variables:
+    KUBE_CONFIG: ${kube_config_prod}
+    RELEASE_NAME: ${project_name}-kyc
+    NAMESPACE: panel-monorepo
+    VALUES_PATH: ./deployment/product/values-kyc.yaml
+  stage: deploy
+  tags:
+    - Runner-Static
+  only:
+    variables:
+      - $CI_COMMIT_TAG =~ /.*kyc-.*/
+      #- $CI_COMMIT_BRANCH == 'main'
+    changes:
+      - apps/zarin-kyc/**/*
+
+deploy_prod_shell:
+  <<: *deploy_template
+  variables:
+    KUBE_CONFIG: ${kube_config_prod}
+    RELEASE_NAME: ${project_name}-shell
+    NAMESPACE: panel-monorepo
+    VALUES_PATH: ./deployment/product/values-shell.yaml
+  stage: deploy
+  tags:
+    - Runner-Static
+  only:
+    variables:
+      - $CI_COMMIT_TAG =~ /.*shell-.*/
+    changes:
+      - apps/shell/**/*
+
+deploy_prod_docs:
+  <<: *deploy_template
+  variables:
+    KUBE_CONFIG: ${kube_config_prod}
+    RELEASE_NAME: ${project_name}-docs
+    NAMESPACE: panel-monorepo
+    VALUES_PATH: ./deployment/product/values-docs.yaml
+  stage: deploy
+  tags:
+    - Runner-Static
+  only:
+    variables:
+      - $CI_COMMIT_TAG =~ /.*docs-.*/
+    changes:
+      - apps/docs/**/*
+
+clear_cdn_cache:
+  stage: clear_cdn_cache
+  interruptible: true
+  script:
+    - sudo ssh -p 8443 root@45.89.136.40 "rm -rf /opt/nginx-cdn-compose/cache/next.zarinpal.com/*" && echo "cache removed successfully on cdn-rack-3"
+    - sudo ssh -p 8443 root@45.89.137.18 "rm -rf /opt/nginx-cdn-compose/cache/next.zarinpal.com/*" && echo "cache removed successfully on cdn-rack-2"
+  tags:
+    - Runner-Static-shell
+  only:
+    - tags
+  when: manual
+
+quality_test:
+  stage: deploy
+  extends: .docker_login
+  script:
+    - docker compose -f docker-compose-quality-test.yml up --pull always
+  tags:
+    - Runner-Static
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop" || $custom_branch_env == "develop"'
+      changes:
+        - apps/shell/**/*
+    - when: never

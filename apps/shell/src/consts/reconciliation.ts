@@ -1,0 +1,1 @@
+export const RECONCILIATION_WAGES_PAGE_SIZE = 5;

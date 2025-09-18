@@ -1,0 +1,136 @@
+.inline-msg {
+  &--neutral {
+    @extend .inline-container;
+    @extend .inline-msg-main;
+    @extend .inline-msg-title;
+    @extend .inline-msg-des;
+    @extend .inline-btn;
+    @apply bg-surface-soft border-border;
+    @apply dark:bg-surface-dark-soft dark:border-border-dark;
+
+    & .action-button--inline-msg--neutral {
+      @apply border border-border;
+    }
+
+    &__icon {
+      @extend .warning-icon;
+      @apply text-icon-disabled;
+      @apply dark:text-icon-dark-disabled;
+    }
+  }
+
+  &--informative {
+    @extend .inline-container;
+    @extend .inline-msg-main;
+    @extend .inline-msg-title;
+    @extend .inline-msg-des;
+    @extend .inline-btn;
+    @apply bg-surface-information border-border-information;
+    @apply dark:bg-surface-information-dark dark:border-border-dark-information;
+
+    & .action-button--inline-msg--informative {
+      @apply border border-border-information;
+    }
+
+    &__icon {
+      @extend .warning-icon;
+      @apply text-icon-information;
+      @apply dark:text-icon-dark-information;
+    }
+  }
+
+  &--warning {
+    @extend .inline-container;
+    @extend .inline-msg-main;
+    @extend .inline-msg-title;
+    @extend .inline-msg-des;
+    @extend .inline-btn;
+    @apply bg-surface-warning border-border-warning;
+    @apply dark:bg-surface-warning-dark dark:border-border-dark-warning;
+
+    & .action-button--inline-msg--warning {
+      @apply border border-border-warning;
+    }
+
+    &__icon {
+      @extend .warning-icon;
+      @apply text-icon-warning;
+      @apply dark:text-icon-dark-warning;
+    }
+  }
+
+  &--negative {
+    @extend .inline-container;
+    @extend .inline-msg-main;
+    @extend .inline-msg-title;
+    @extend .inline-msg-des;
+    @extend .inline-btn;
+    @apply bg-surface-danger border-border-danger;
+    @apply dark:bg-surface-danger-dark dark:border-border-dark-danger;
+
+    & .action-button--inline-msg--negative {
+      @apply border border-border-danger;
+    }
+
+    &__icon {
+      @extend .warning-icon;
+      @apply text-icon-danger;
+      @apply dark:text-icon-dark-danger;
+    }
+  }
+
+  &--positive {
+    @extend .inline-container;
+    @extend .inline-msg-main;
+    @extend .inline-msg-title;
+    @extend .inline-msg-des;
+    @extend .inline-btn;
+    @apply bg-surface-success border-border-success;
+    @apply dark:bg-surface-success-dark dark:border-border-dark-success;
+
+    & .action-button--inline-msg--positive {
+      @apply border border-border-success;
+    }
+
+    &__icon {
+      @extend .warning-icon;
+      @apply text-icon-success;
+      @apply dark:text-icon-dark-success;
+    }
+  }
+}
+
+.inline-container {
+  @apply flex rounded-sm border p-md w-full;
+}
+
+.warning-icon {
+  @apply w-xl h-xl;
+}
+
+.inline-btn {
+  @apply mt-xs;
+}
+
+.inline-msg-main {
+  @apply flex-1;
+}
+
+.inline-msg-header {
+  @apply flex;
+
+  i {
+    @apply w-xl h-xl text-icon mr-sm ml-md cursor-pointer;
+    @apply dark:text-icon-dark;
+  }
+}
+
+.inline-msg-title {
+  @apply text-text text-button-500-bt1 flex-1;
+  @apply dark:text-text-dark;
+}
+
+.inline-msg-des {
+  @apply text-text text-body-400-b3;
+  @apply dark:text-text-dark;
+}

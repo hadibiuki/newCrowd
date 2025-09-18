@@ -1,0 +1,16 @@
+{
+  "extends": "@zarinpal/tsconfig/base.json",
+  "compilerOptions": {
+    "allowJs": false,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "types": ["vite/client"],
+    "jsx": "react",
+    "paths": {
+      "ui/*": ["../../libs/ui/src/components/*"],
+      "@date/*": ["../../libs/date-picker/src/*"]
+    }
+  },
+  "includes": ["**/*.ts", "**/*.vue"]
+}

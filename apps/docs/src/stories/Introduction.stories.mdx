@@ -1,0 +1,107 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Intro" />
+
+# 🏅 Welcome to Monorepo Docs
+
+## Projects 🖥
+
+- Docs
+- Shell (panel)
+- KYC
+- Locale (localization)
+- UI (Basic Ui Library)
+- Eslint Config (Basic config for Eslint included another project)
+- TsConfig (Basic Config for Typescript included another project)
+
+## Project graph 🖼
+
+![graph](../../public/graph.png)
+
+## Requirement 🧰
+
+> node > 18.6.0
+
+> npm i -g pnpm
+
+> npm i -g nx
+
+## Project Commands 🤖
+
+**install all needed dependencies**
+
+`pnpm i`
+
+**clean all caches and dependencies**
+
+`pnpm clean`
+
+**Build Project**
+
+`pnpm build`
+
+**Generate localization**
+
+`pnpm generate`
+
+**Run dev mode Storybook(docs)**
+
+`pnpm story`
+
+**Run dev mode Shell(panel)**
+
+`pnpm dev`
+
+**Run dev mode KYC**
+
+`pnpm dev:kyc`
+
+**Format projects**
+
+`pnpm format`
+
+**Lint projects**
+
+`pnpm lint`
+
+**Type-Check projects**
+
+`pnpm tsc`
+
+## commitlint 🖋
+
+Commitlint helps your project to ensure nice and tidy commit messages without needing any downloads or installations. It's designed with your workflow in mind by using zero change to your system.
+
+> [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/)
+
+> [commitlint.io] (https://commitlint.io/)
+
+**format of commits**
+
+> `<type>(scope):[space][message]`
+
+example:
+
+> `feat(ui,shell,...): implement...`
+
+**type of commit**
+
+- **WIP**: working in progress
+- **feat**: add new feature
+- **fix**: fixed a bug
+- **build**: new dependencies or add external values to project
+- **docs**: new document to project
+- **refactor**: code refactor section
+- **style**: changed style of code like comment ,remove consol.log ,...
+- **perf**: increase performance of code
+- **test**: write test for code
+- **chore**: merge branch
+- **ci**: ci progress code
+
+**INFO**
+
+for skip husky lint commit or types error ,...
+
+_`--no-verify`_
+
+**like**: `git commit -m "fix(ui): ..." --no-verify`
