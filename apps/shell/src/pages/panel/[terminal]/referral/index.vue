@@ -6,6 +6,10 @@
 </template>
 <script lang="ts" setup>
 const t = useI18n();
+definePageMeta({
+  name: 'referral',
+  layout: 'terminal',
+});
 useHead({
   title: `${t('_common.page_title.referrer')}`,
 });

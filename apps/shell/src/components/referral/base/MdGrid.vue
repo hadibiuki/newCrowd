@@ -8,10 +8,10 @@
           <div class="root__header">
             <!-- title column -->
             <div class="root__header--id">
-              <ui-Avatar :src="i?.avatar" />
+              <ui-Avatar :src="i?.avatarFile?.url" />
               <div class="flex flex-col">
-                <span class="root__header--id__text">{{ i?.name }}</span>
-                <span class="text-text-soft text-body-400-b3">ZP.{{ i?.id }}</span>
+                <span class="root__header--id__text">{{ i?.fullName }}</span>
+                <span class="text-text-soft text-body-400-b3">{{ i?.id }}</span>
               </div>
             </div>
           </div>
@@ -23,7 +23,7 @@
               {{ columns[1].label }}
             </div>
             <div class="root__main--title__title">
-              <span class="px-2xs"> {{ i.commission }} </span>
+              <span class="px-2xs"> {{ numberFormat(i.totalIncome) }} </span>
               <ui-Label :text="$t('_common.currency.rial')" type="neutral" />
             </div>
           </div>
@@ -34,7 +34,7 @@
               {{ columns[2].label }}
             </div>
             <div class="root__main--title__title">
-              {{ i.last_session_time }}
+              {{ numberFormat(i.lastIncome) }}
             </div>
           </div>
           <ui-Divider />
@@ -44,7 +44,7 @@
               {{ columns[3].label }}
             </div>
             <div class="root__main--title__title">
-              {{ i.registered_at }}
+              {{ toJalali(i.createdDate) }}
             </div>
           </div>
         </template>
@@ -56,7 +56,8 @@
 <script setup lang="ts">
 import { useReferralColumns } from '@/composables/referral/useReferralColumns';
 import { UserReferred } from '@/graphql/graphql';
-
+const { numberFormat } = useMath();
+const { toJalali } = useDate();
 export interface Props {
   data: UserReferred[];
   loading: boolean;

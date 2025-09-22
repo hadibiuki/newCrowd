@@ -131,9 +131,6 @@ const addArchive = (id?: string, type: 'single' | 'all' = 'single') => {
 const hasArchiveAnnouncements = computed(
   () => announcements.value && announcements.value.filter(item => !item?.isRead)?.length
 );
-onMounted(() => {
-  authStore.getConnected();
-});
 </script>
 <style lang="scss" scoped>
 .notification {

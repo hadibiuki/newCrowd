@@ -5,10 +5,10 @@
       {{ $t('_common.buttons.userProfile') }}
     </div>
     <div class="flex items-center justify-between mb-xl">
-      <ui-Avatar :src="userId?.avatar" shape="rounded" size="lg" />
-      <ui-ZpBadge :id="userId?.id" :level="userId?.level" />
+      <ui-Avatar :src="userAuth.avatarFile?.url" shape="rounded" size="lg" />
+      <ui-ZpBadge :id="userAuth?.id" />
     </div>
-    <ui-InlineMessage
+    <!-- <ui-InlineMessage
       v-if="userId?.transaction_ban || userId?.is_suspend"
       type="negative"
       class="!mb-xl !mt-0"
@@ -23,7 +23,7 @@
           </template>
         </i18n-t>
       </template>
-    </ui-InlineMessage>
+    </ui-InlineMessage> -->
     <div
       class="main block border border-border-divider rounded-sm flex-row items-center border-b-0"
     >
@@ -31,28 +31,54 @@
         <span class="text-body-400-b3 text-text-soft main__item--heading">
           {{ $t('_user.full_name') }}
         </span>
-        <span class="text-body-400-b2 truncate flex-1"> {{ userId?.full_name }}</span>
+        <span class="text-body-400-b2 truncate flex-1"> {{ userAuth?.fullName }}</span>
       </div>
       <div class="flex w-full gap-xs flex-row main__item--detail">
         <span class="text-body-400-b3 text-text-soft main__item--heading">
           {{ $t('_user.ssn') }}
         </span>
-        <span class="text-body-400-b2 truncate flex-1"> {{ userId?.ssn }}</span>
+        <span class="text-body-400-b2 truncate flex-1"> {{ userAuth?.nationalCode }}</span>
       </div>
       <div class="flex w-full gap-xs flex-row main__item--detail">
         <span class="text-body-400-b3 text-text-soft main__item--heading">
           {{ $t('_form.add_invoice.mobile') }}
         </span>
-        <span class="text-body-400-b2 truncate flex-1"> {{ userId?.cell_number }}</span>
+        <span class="text-body-400-b2 truncate flex-1"> {{ userAuth?.phoneNumber }}</span>
       </div>
       <div class="flex w-full gap-xs flex-row main__item--detail">
         <span class="text-body-400-b3 text-text-soft main__item--heading">
-          {{ $t('_user.levelTitle') }}
+          {{ $t('user.profile.bource_code') }}
         </span>
         <span class="text-body-400-b2 truncate flex-1">
-          {{ $t('_user.level') }} {{ $t(`_user.levelType.${userId?.level}`) }}
+          {{ userAuth?.bourseCode }}
         </span>
       </div>
+      <div class="flex w-full gap-xs flex-row main__item--detail">
+        <span class="text-body-400-b3 text-text-soft main__item--heading">
+          {{ $t('user.profile.email') }}
+        </span>
+        <span class="text-body-400-b2 truncate flex-1">
+          {{ userAuth?.email }}
+        </span>
+      </div>
+      <div class="flex w-full gap-xs flex-row main__item--detail">
+        <span class="text-body-400-b3 text-text-soft main__item--heading">
+          {{ $t('user.profile.nick_name') }}
+        </span>
+        <span class="text-body-400-b2 truncate flex-1">
+          {{ userAuth?.nickName }}
+        </span>
+      </div>
+    </div>
+    <div class="mt-xl flex items-end ">
+      <ui-Switch
+        :checked="userAuth.showNickName"
+        :loading="loading"
+        :label="$t('user.profile.show_nick_name_to_user')"
+        name="date_time"
+        class="ltr"
+        @change="toggleNickname"
+      />
     </div>
     <div class="mt-xl rtl text-text text-body-400-b3">
       <span v-if="years">{{ `${years.toLocaleString('fa')}  سال و` }} </span>
@@ -63,14 +89,24 @@
 </template>
 
 <script setup lang="ts">
-import { useUserIdQuery } from '@/composables/user/useUserIdQuery';
-
-const { data: userId, loading } = useUserIdQuery();
+import { storeToRefs } from 'pinia';
+import { showNickNameToOtherUsersApi, getUserProfileInformationApi } from '~/restApi/profile';
+const loading = false;
+const authStore = useAuthStore();
+const { userAuth } = storeToRefs(authStore);
 const { getNow, getMoment } = useDate();
-const createdAt = userId?.value?.created_at;
+const createdAt = userAuth?.value?.createdDate;
 const now = getNow();
 const duration = getMoment().duration(now.diff(createdAt));
 const [years, months] = [duration.years(), duration.months()];
+const toggleNickname = async () => {
+  showNickNameToOtherUsersApi();
+
+  // eslint-disable-next-line promise/catch-or-return, promise/always-return
+  getUserProfileInformationApi().then(response => {
+    authStore.setUserAuth(response.data);
+  });
+};
 </script>
 <style lang="scss" scoped>
 .main {

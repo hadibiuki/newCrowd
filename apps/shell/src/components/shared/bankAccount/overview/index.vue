@@ -5,9 +5,6 @@
     :selectable="selectable"
     :selected-bank-account="selectedBankAccount"
     @select="handleExposer"
-    @bank-account-data="
-      (bankAccountList: BankAccount[]) => $emit('bankAccountData', bankAccountList)
-    "
   />
   <SharedBankAccountOverviewLgView
     v-else

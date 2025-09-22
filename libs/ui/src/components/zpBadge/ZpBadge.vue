@@ -28,9 +28,9 @@ const levelClass = computed(() => {
       return 'zp--silver';
     case 'BLUE':
       return 'zp--blue';
+    default:
+      return 'zp--basic';
   }
-
-  return '';
 });
 </script>
 <style lang="scss" scoped>

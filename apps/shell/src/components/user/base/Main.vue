@@ -3,12 +3,7 @@
     <div class="w-full h-full" dir="rtl">
       <ui-Card dir="rtl">
         <template #main>
-          <UserBaseAddressList v-if="route.query.menu === 'address'" />
-          <UserBaseTerminalMain v-else-if="route.query.menu === 'terminal'" />
-          <UserBaseAccessTokenMain v-else-if="route.query.menu === 'accessToken'" />
-          <UserBaseNotification v-else-if="route.query.menu === 'notification'" />
-          <UserBaseBankAccountMain v-else-if="route.query.menu === 'bankAccount'" />
-          <UserBaseConnectedAppsMain v-else-if="route.query.menu === 'connectApp'" />
+          <UserBaseBankAccountMain v-if="route.query.menu === 'bankAccount'" />
           <UserBaseInfo v-else />
         </template>
       </ui-Card>

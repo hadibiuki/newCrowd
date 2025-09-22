@@ -1,19 +1,17 @@
 import { TerminalType } from '@/graphql/graphql';
-import { TerminalAndMeSchema } from '@/services/gql/terminal';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
+
+import { getUserProfileInformationApi } from '~/restApi/profile';
 const { handleAuthRedirect } = useAuth();
 export default defineNuxtPlugin(async () => {
   const route = useRoute();
   const authStore = useAuthStore();
   const { fill } = useActiveTerminal();
   authStore.setSpaLoading(true);
-  await axios
-    .post('/api/v4/graphql', {
-      query: TerminalAndMeSchema.loc.source.body,
-    })
+  await getUserProfileInformationApi()
     .then(response => {
       authStore.setSpaLoading(false);
-      authStore.setUserAuth(response.data.data.Me);
+      authStore.setUserAuth(response.data);
       const terminals = response.data.data.Terminals as TerminalType[];
       fill(terminals as unknown as TerminalType[]);
 

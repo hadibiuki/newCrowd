@@ -1,4 +1,3 @@
-import broadcast from '@/broadcast/broadcast';
 import { UserType } from '@/graphql/graphql';
 // import { DataStatusType } from '@/graphql/graphql';
 import { UserAnnouncementTypeCustom } from '@/types/userCustomTypes';
@@ -28,37 +27,23 @@ interface INotification {
   title: string;
   type: string;
 }
-interface IResponse {
-  data: INotification;
-}
 
 export const useAuthStore = defineStore(
   'authStore',
   () => {
-    const socket = new broadcast();
     const isFirstTime = ref(true);
     const hasLogged = ref(true);
     const spaLoading = ref(true);
     const personal_link = ref<string>();
     const showLogOut = ref<boolean>(false);
     const profileVersion = ref<boolean>(false);
-    const userAuth = ref<IUser>({} as IUser);
+    const userAuth = ref({});
     const notifications = ref<INotification[]>([]);
     const announcements = ref<UserAnnouncementTypeCustom[]>([]);
     const version = ref<string>();
     const tourActive = ref(false);
     const directReconcileModal = ref(false);
     const directReconcile = ref<Record<string, boolean>>({});
-    const getConnected = () => {
-      socket.subscribe(`$panel:App.User.${userAuth.value.id}`, (res: IResponse) => {
-        if (notifications.value.length < 30) {
-          notifications.value.push(res.data);
-        } else {
-          notifications.value[notifications.value.length - 1] = res.data;
-        }
-      });
-    };
-
     function setSpaLoading(value: boolean) {
       spaLoading.value = value;
     }
@@ -68,7 +53,7 @@ export const useAuthStore = defineStore(
     }
 
     function setUserAuth(me: UserType) {
-      userAuth.value.level = me?.level ? me.level : '';
+      userAuth.value = me;
     }
 
     function setDirectReconcile(terminalId: string) {
@@ -101,7 +86,6 @@ export const useAuthStore = defineStore(
       announcements,
       directReconcile,
       directReconcileModal,
-      getConnected,
       hasLogged,
       isFirstTime,
       notifications,

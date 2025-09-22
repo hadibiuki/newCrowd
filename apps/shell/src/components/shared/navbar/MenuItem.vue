@@ -197,6 +197,24 @@ const list = computed<MenuItem[]>(() => [
       !authStore.profileVersion,
     disabled: activeTerminal?.value?.status === TerminalStatusEnum.Pending,
   },
+  {
+    name: 'referral',
+    icon: 'Referral',
+    label: t('_common.links.referral_code'),
+    permission: true,
+    active:
+      _includes(activeTerminal.value?.permissions, TerminalPermissionEnum.Zarinlink) &&
+      !authStore.profileVersion,
+    disabled: activeTerminal?.value?.status === TerminalStatusEnum.Pending,
+  },
+
+  //  <NuxtLink to="/panel/referral">
+  //         <ui-Nav-Link
+  //           :label="$t('notif_settings.referrer')"
+  //           class="referral-item"
+  //           :arrow="false"
+  //           icon="Referral"
+  //         />
 ]);
 const footerList = computed(() => {
   if (authStore.profileVersion) {

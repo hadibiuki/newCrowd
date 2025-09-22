@@ -9,13 +9,7 @@
           :content="UserSectionCard"
         >
           <template #default>
-            <ui-Avatar
-              v-if="userAvatar"
-              :src="userId?.avatar"
-              has-border
-              size="sm"
-              shape="rounded"
-            />
+            <ui-Avatar v-if="userAvatar" :src="userAvatar" has-border size="sm" shape="rounded" />
             <ui-Avatar
               v-else
               size="sm"
@@ -62,23 +56,18 @@
 import { storeToRefs } from 'pinia';
 import UserSectionCard from '../UserSectionCard.vue';
 import NotificationSectionCard from '../NotificationSectionCard.vue';
-import { useUserIdQuery } from '@/composables/user/useUserIdQuery';
 import { getAllnotificationsApi } from '~/restApi/notification';
-
 const { md } = useSize();
 const router = useRouter();
 const onTicket = () => {
   router.push('/panel/ticket');
 };
 const userAvatar = ref('');
-const { data: userId, onResult } = useUserIdQuery();
 const authStore = useAuthStore();
-const { announcements } = storeToRefs(authStore);
+const { announcements, userAuth } = storeToRefs(authStore);
 const notifyCount = computed(() => {
   if (announcements.value?.length) {
     const count = announcements.value.filter(item => !item.isRead).length;
-    //  +
-    // notifications.value.filter(item => !item.isSeen).length;
 
     return count > 99 ? '+99' : count;
   }
@@ -87,9 +76,9 @@ const actionButtonRef = ref();
 const isShow = computed(() => actionButtonRef.value?.tippyRef?.state?.isShown);
 const checkImage = () => {
   const img = new Image();
-  img.src = `${userId.value?.avatar}&d=404`;
+  img.src = `${userAuth.value?.avatarFile?.url}`;
   img.onload = () => {
-    userAvatar.value = userId.value?.avatar as string;
+    userAvatar.value = userAuth.value?.avatarFile?.url as string;
   };
   img.onerror = () => {
     userAvatar.value = '';
@@ -100,16 +89,17 @@ useHead({
     class: computed(() => (isShow.value ? 'overflow-y-hidden !pr-0' : '')),
   },
 });
-onResult(() => {
-  checkImage();
-});
-onMounted(() => {
-  // eslint-disable-next-line promise/catch-or-return
-  getAllnotificationsApi({ pageNumber: 1, pageSize: 50 }).then(res => {
-    // eslint-disable-next-line promise/always-return
-    if (res) {
-      announcements.value = res.data.items;
-    }
-  });
+onMounted(async () => {
+  try {
+    const [announcementsData] = await Promise.all([
+      getAllnotificationsApi({ pageNumber: 1, pageSize: 10 }),
+    ]);
+    announcements.value = announcementsData.data.items;
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.log({ err });
+  } finally {
+    checkImage();
+  }
 });
 </script>
