@@ -17,7 +17,7 @@
         ref="selectRef"
         dir="rtl"
         :class="[styleValue, focusStyledValue]"
-        class="input__inner flex w-full"
+        class="input__inner flex w-full border border-border rounded-sm"
       >
         <!-- label -->
         <Transition name="label">
@@ -47,6 +47,9 @@
           <div v-if="afterIcon">
             <Icon :name="afterIcon" class="input__inner__icon--after flex items-center" />
           </div>
+          <!-- <div v-if="data.url">
+            <NuxtImg :src="data.url" />
+          </div> -->
         </div>
       </div>
     </Tippy>
@@ -90,6 +93,7 @@ export interface DataType {
   icon?: string;
   description?: string;
   disabled?: boolean;
+  url?: string;
 }
 
 export interface Props {
@@ -146,7 +150,7 @@ const styleValue = computed(() => {
     return 'input__inner--disabled';
   }
 
-  return 'input__inner--default';
+  return 'input__inner--';
 });
 const focusStyledValue = computed(() => {
   if ((props.beforeIcon || props.afterIcon) && showLabel.value) {

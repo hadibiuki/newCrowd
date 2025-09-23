@@ -20,9 +20,18 @@
           </div>
         </template>
         <template #main>
-          <div class="grid grid-cols-2 rounded-sm mt-xl gap-xs">
-            <SharedProductCard v-for="project in projects" :key="project.id" :project="project" />
-          </div>
+          <ui-skeleton :loading="mainLoading" :height="350" :width="0">
+            <div class="grid grid-cols-2 rounded-sm mt-xl gap-xs" v-if="projects.length">
+              <SharedProductCard v-for="project in projects" :key="project.id" :project="project" />
+            </div>
+            <div v-else class="flex jsutify-content items-center h-full">
+              <ui-EmptyState
+                :description="$t('transactions.no_invest_exist')"
+                :title="$t('transactions.chance_to_invest')"
+                vector="Placeholder"
+              />
+            </div>
+          </ui-skeleton>
         </template>
       </ui-Card>
       <!--  -->
@@ -55,12 +64,11 @@
                 </ui-skeleton>
                 <ui-skeleton :loading="mainLoading" :width="64">
                   <ui-Button
-                    v-if="hasPermission"
                     :text="$t('transactions.withdrawal')"
                     variant="text"
                     type="neutral"
                     :loading="mainLoading"
-                    @click="navigateRoute('reconciliation')"
+                    @click="openWalletModal"
                   />
                 </ui-skeleton>
               </div>
@@ -82,7 +90,7 @@
               <div class="flex flex-col justify-center items-center p-xs gap-xs py-sm">
                 <ui-skeleton :loading="mainLoading" :width="64">
                   <span class="text-text-soft text-body-400-b3">
-                    {{ $t('transactions.withdraw_some') }}
+                    {{ $t('transactions.number_of_invest') }}
                   </span>
                 </ui-skeleton>
                 <ui-skeleton :loading="mainLoading" :width="168" :height="20">
@@ -96,7 +104,7 @@
               >
                 <ui-skeleton :loading="mainLoading" :width="64">
                   <span class="text-text-soft text-body-400-b3">
-                    {{ $t('transactions.withdraw_some') }}
+                    {{ $t('transactions.total_invest') }}
                   </span>
                 </ui-skeleton>
                 <ui-skeleton :loading="mainLoading" :width="168" :height="20">
@@ -111,7 +119,7 @@
               >
                 <ui-skeleton :loading="mainLoading" :width="64">
                   <span class="text-text-soft text-body-400-b3">
-                    {{ $t('transactions.withdraw_some') }}
+                    {{ $t('transactions.total_profit') }}
                   </span>
                 </ui-skeleton>
                 <ui-skeleton :loading="mainLoading" :width="168" :height="20">
@@ -158,20 +166,27 @@
     :platforms="platforms"
     @close="store.showModal = false"
   />
+  <DashboardBaseModal
+    :show-template-modal="showWalletModal"
+    :bank-accounts="banckAccounts"
+    :whithdraw="whithdraw"
+    :loading-check="loadingCheck"
+    @close="showWalletModal = false"
+    @requst="withdrawRequstHandler"
+  />
 </template>
 <script lang="ts" setup>
-import { ReconciliationType, TerminalPermissionEnum } from '@/graphql/graphql';
-import { getUserBalanceApi } from '~/restApi/balance';
+import { getUserBalanceApi, sendWithdrawRequestApi } from '~/restApi/balance';
+import { getBankAccountsApi } from '~/restApi/bancAccount';
 import { getUserPaymentsSummeryApi } from '~/restApi/payment';
 import { getAllProjects } from '~/restApi/project';
 import { getAllPlatformsApi } from '~/restApi/transactions';
-
+const { $notify } = useNuxtApp();
 export interface Date {
   formatValue: string;
 }
 const t = useI18n();
 const store = useSessionStore();
-const { hasPermission } = usePermissionValidate(TerminalPermissionEnum.Reconcile);
 const router = useRouter();
 const { md } = useSize();
 const domain = useTerminalStore().currentDomain;
@@ -179,14 +194,10 @@ const { numberFormat } = useMath();
 const navigateRoute = (page: 'session' | 'reconciliation') => {
   router.push('/panel/' + domain + `/${page}`);
 };
-const clicked = (item?: ReconciliationType) => {
-  router.push(`/panel/${domain}/reconciliation/${item?.id}`);
-};
 const mainLoading = computed(
   () => projectLoading.value || store.loading || summeryLoading.value || whithdrawLoading.value
 );
 store.dashboardLoading = mainLoading;
-
 const platforms = ref([]);
 const projects = ref([]);
 const projectLoading = ref(true);
@@ -194,6 +205,8 @@ const whithdraw = ref({});
 const whithdrawLoading = ref(false);
 const summery = ref({});
 const summeryLoading = ref(false);
+const banckAccounts = ref([]);
+const loadingCheck = ref(false);
 onMounted(() => {
   // eslint-disable-next-line promise/catch-or-return, promise/always-return
   getAllProjects({ pageSize: 2, pageNumber: 1, internalStatus: 2 })
@@ -212,16 +225,7 @@ onMounted(() => {
     }
   });
 
-  // eslint-disable-next-line promise/catch-or-return
-  getUserBalanceApi()
-    // eslint-disable-next-line promise/always-return
-    .then(res => {
-      whithdraw.value = res.data;
-    })
-    .finally(() => {
-      whithdrawLoading.value = false;
-    });
-
+  getWalletAmount();
   // eslint-disable-next-line promise/catch-or-return
   getUserPaymentsSummeryApi()
     // eslint-disable-next-line promise/always-return
@@ -231,7 +235,56 @@ onMounted(() => {
     .finally(() => {
       summeryLoading.value = false;
     });
+
+  // eslint-disable-next-line promise/catch-or-return, promise/always-return
+  getBankAccountsApi().then(res => {
+    banckAccounts.value = res.data.items;
+  });
 });
+
+const getWalletAmount = () => {
+  // eslint-disable-next-line promise/catch-or-return
+  getUserBalanceApi()
+    // eslint-disable-next-line promise/always-return
+    .then(res => {
+      whithdraw.value = res.data;
+    })
+    .finally(() => {
+      whithdrawLoading.value = false;
+    });
+};
+
+const showWalletModal = ref(false);
+const openWalletModal = () => {
+  showWalletModal.value = true;
+};
+const withdrawRequstHandler = (data) =>{
+  loadingCheck.value = true;
+  // eslint-disable-next-line promise/catch-or-return
+  sendWithdrawRequestApi(data)
+    // eslint-disable-next-line promise/always-return
+    .then(async () => {
+      $notify({
+        isRead: false,
+        message: t('transactions.success_withfrawal_request'),
+        type: 'success',
+      });
+      getWalletAmount();
+      await useDelay(1000);
+      showWalletModal.value = false;
+    })
+    .catch(err => {
+      console.log({err})
+      $notify({
+        isRead: false,
+        message: err.message,
+        type: 'error',
+      });
+    })
+    .finally(() => {
+      loadingCheck.value = false;
+    });
+};
 </script>
 <style lang="scss" scoped>
 :deep(.input__inner--default) {

@@ -32,6 +32,7 @@ function createAxios(): AxiosInstance {
     (response: AxiosResponse) => response.data,
     error => {
       // 🔹 Build a custom error object
+      console.log({error})
       const customError = {
         details: error.response?.data || null,
         isNetworkError: !error.response,

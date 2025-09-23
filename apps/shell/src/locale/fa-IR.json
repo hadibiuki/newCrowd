@@ -3445,10 +3445,23 @@
     "transaction_invest_from_platform": "سرمایه گذاری از پلتفرم",
     "transaction_title": "عنوان تراکنش",
     "asset":"دارایی",
-    "withdraw_some":"موجودی قابل برداشت",
+    "withdraw_some":"موجودی دارایی",
     "withdrawal": "برداشت",
     "performance_summary":"خلاصه عملکرد",
-    "last_chance_to_invest":"آخرین فرصت های سرمایه گذاری"
+    "last_chance_to_invest":"آخرین فرصت های سرمایه گذاری",
+    "chance_to_invest":"فرصت های سرمایه گذاری",
+    "no_invest_exist":"در حال حاضر طرح فعالی برای سرمایه‌گذاری وجود ندارد.",
+    "number_of_invest":"تعداد سرمایه گذاری",
+    "total_invest":"کل مبلغ سرمایه‌گذاری",
+    "total_profit":"کل سود",
+    "withdraw_asset":"برداشت از دارایی",
+    "total_assets":"کل موجودی دارایی",
+    "desired_amount": "مبلغ دلخواه",
+    "some_assets":"برداشت بخشی از موجودی",
+    "amount_assets":"مبلغ برداشت",
+    "choose_cart":"انتخاب کارت بانکی",
+    "withdrawal_cash": "برداشت وجه",
+    "success_withfrawal_request": "درخواست برداشت با موفقیت ثبت شد."
 
   }
 }

@@ -5,8 +5,13 @@
     @click="onSelect"
   >
     <div class="flex flex-col justify-center items-end gap-2xs">
-      <div class="flex">
-        <Label v-if="helper" :text="helper" type="informative" />
+      <div class="flex flex-row items-start">
+        <div>
+          <Label v-if="helper" :text="helper" type="informative" />
+        </div>
+        <div v-if="withDetails" class="mr-xs">
+          <slot />
+        </div>
         <Radio
           :label="label"
           :name="name"
@@ -36,9 +41,8 @@
     <div v-if="!!vector" class="radio-card__section">
       <Illustration :name="vector" />
     </div>
-    <div v-if="withDetails" class="radio-card__bottom">
-      <slot />
-    </div>
+    <!-- <div class="radio-card__bottom">
+    </div> -->
   </div>
 </template>
 <script lang="ts" setup>

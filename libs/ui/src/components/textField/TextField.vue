@@ -1,6 +1,11 @@
 <template>
   <div class="input">
-    <div ref="controller" dir="rtl" :class="[styleValue]" class="group input__inner">
+    <div
+      ref="controller"
+      dir="rtl"
+      :class="[styleValue]"
+      class="group input__inner border border-border rounded-sm"
+    >
       <!-- label -->
       <Transition name="label">
         <div v-if="showLabel && label" class="input__inner__label">
@@ -48,7 +53,7 @@
         </div>
       </div>
     </div>
-    <div class="input__description" :dir="isLtr ? 'ltr' : 'rtl'">
+    <div class="input__description" :dir="!isLtr ? 'ltr' : 'rtl'">
       <!-- helper -->
       <div>
         <div v-if="helper" class="input__description__helper" dir="rtl">
@@ -183,7 +188,7 @@ const styleValue = computed(() => {
     return 'input__inner--disabled';
   }
 
-  return 'input__inner--default';
+  return '';
 });
 const handleLabel = (ctx: boolean) => {
   if (ctx && placeholder.value && !loading.value && label.value) {

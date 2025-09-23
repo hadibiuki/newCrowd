@@ -1,6 +1,9 @@
 <template>
   <!-- @click="handleClickOnCart" -->
-  <div class="flex flex-col rounded-2xl border border-border-soft cursor-pointer">
+  <div
+    class="flex flex-col rounded-2xl border border-border-soft cursor-pointer"
+    @click="$router.push('/projects/' + project.id)"
+  >
     <div class="h-[156px] mb-md relative">
       <NuxtImg
         :src="project.coverImageUrl ? project.coverImageUrl : '/projectImage.png'"
@@ -262,9 +265,9 @@ const handleLinkClicked = () => {
 //     }
 //     }
 
-//     const handleClickOnCart = ()=>{
-//     window.open('/projects/'+ props.project.id, '_blank', 'noopener,noreferrer');
-//     }
+    // const handleClickOnCart = ()=>{
+    // window.open('/projects/'+ props.project.id, '_blank', 'noopener,noreferrer');
+    // }
 
 //     const errorMessage = ref('');
 
