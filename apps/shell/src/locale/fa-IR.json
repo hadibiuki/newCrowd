@@ -3463,5 +3463,27 @@
     "withdrawal_cash": "برداشت وجه",
     "success_withfrawal_request": "درخواست برداشت با موفقیت ثبت شد."
 
+  },
+  "signup":{
+    "phone_input":"شماره موبایل",
+    "ssn_input":"کد ملی",
+    "password": "رمز عبور",
+    "reapet_password": "تکرار رمز عبور",
+    "login_whit_otp":"ورود با رمز یکبارمصرف",
+    "login_whit_pass" : "ورود با رمز ثابت",
+    "not_access_to_number": "به شماره دسترسی ندارم",
+    "name":"نام ",
+    "family":" نام خانوادگی",
+    "continue": "ادامه",
+    "referral_code":"کد معرف(اختیاری)",
+    "howToFindZarinPal":"نحوه آشنایی با زرین کراد(اختیاری)",
+    "sejam_auth": "احراز هویت سجام",
+    "sejam_auth_description" : "کاربر گرامی قبل از سرمایه‌گذاری حتما احراز هویت سجام خود را در بخش حساب کاربری تکمیل کنید.",
+    "create_account": "ایجاد حساب",
+    "create_account_hint":"برای ادامه قوانین را اسکرول کرده بخوانید و سپس تیک قبول قوانین را بزنید.",
+    "accept_roles": "قوانین را خوانده و پذیرفته‌ام"
+  },
+  "otp":{
+    "edit_number":"ویرایش شماره"
   }
 }

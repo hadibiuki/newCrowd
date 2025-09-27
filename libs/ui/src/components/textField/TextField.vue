@@ -32,11 +32,12 @@
           :readonly="loading"
           spellcheck="false"
           @blur="blurInput"
+          :type="type"
           @focus="focusInput"
           @input="handleInput"
           @keypress="onlyNumber"
         />
-        <div v-if="afterIcon" class="flex items-center">
+        <div v-if="afterIcon" class="flex items-center cursor-pointer">
           <Icon
             :name="afterIcon"
             class="input__inner__icon--after"
@@ -102,6 +103,7 @@ export interface Props {
   beforeIcon?: string;
   afterIcon?: string;
   unit?: string;
+  type?: string;
   autoFocus?: boolean;
   button?: string;
   helper?: {
@@ -116,6 +118,7 @@ export interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  type: '',
   placeholder: '',
   modelValue: '',
   beforeIcon: undefined,
@@ -129,7 +132,7 @@ const props = withDefaults(defineProps<Props>(), {
   maxLength: 0,
   isLtr: false,
   inputCustomClass: '',
-  showMaxLengthLimit: true,
+  showMaxLengthLimit: false,
 });
 // emits
 defineEmits(['buttonAction', 'update:modelValue']);
