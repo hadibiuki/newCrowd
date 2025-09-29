@@ -35,12 +35,12 @@
             >
               <ui-Skeleton :width="40" :loading="loading">
                 <div class="text-body-400-b2 font-medium truncate max-w-[135px]" dir="rtl">
-                  {{ activeTerminal?.name }}
+                  {{ userAuth?.fullName }}
                 </div>
               </ui-Skeleton>
               <ui-Skeleton :width="40" :height="5" :loading="loading">
                 <div class="text-caption-400-c1 truncate max-w-[135px]">
-                  {{ activeTerminal?.domain }}
+                  {{ userAuth?.type === 1 ? 'حقوقی' : 'حقیقی' }}
                 </div>
               </ui-Skeleton>
             </div>
@@ -61,9 +61,12 @@
 
 <script setup lang="ts">
 import { Tippy } from 'vue-tippy';
+import { storeToRefs } from 'pinia';
 import TerminalOverview from '@/components/shared/terminal/TerminalOverview.vue';
 import { useTerminalQuery } from '@/composables/terminal/useTerminalQuery';
 const { activeTerminal, loading } = useTerminalQuery();
+const authStore = useAuthStore();
+const { userAuth } = storeToRefs(authStore);
 const tippyRef = ref<typeof Tippy>();
 const store = useNavigateStore();
 const { isActiveDirectReconcile } = useDirectReconcile();

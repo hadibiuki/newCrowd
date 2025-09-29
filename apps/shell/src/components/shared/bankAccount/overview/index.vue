@@ -23,10 +23,12 @@ export interface Props {
   isShare?: boolean;
   selectedBankAccount: BankAccount | undefined;
   lg: boolean;
+  isLegual?: boolean;
 }
 const store = useBankAccountStore();
 withDefaults(defineProps<Props>(), {
   isShare: true,
+  isLegual: false,
 });
 
 const emit = defineEmits(['select', 'bankAccountData']);

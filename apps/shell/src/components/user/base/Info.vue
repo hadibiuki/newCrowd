@@ -70,7 +70,7 @@
         </span>
       </div>
     </div>
-    <div class="mt-xl flex items-end ">
+    <div class="mt-xl flex items-end">
       <ui-Switch
         :checked="userAuth.showNickName"
         :loading="loading"
@@ -93,14 +93,15 @@ import { storeToRefs } from 'pinia';
 import { showNickNameToOtherUsersApi, getUserProfileInformationApi } from '~/restApi/profile';
 const loading = false;
 const authStore = useAuthStore();
-const { userAuth } = storeToRefs(authStore);
+const { userOriginAuth: userAuth } = storeToRefs(authStore);
 const { getNow, getMoment } = useDate();
 const createdAt = userAuth?.value?.createdDate;
 const now = getNow();
 const duration = getMoment().duration(now.diff(createdAt));
 const [years, months] = [duration.years(), duration.months()];
+// eslint-disable-next-line require-await
 const toggleNickname = async () => {
-  showNickNameToOtherUsersApi();
+  showNickNameToOtherUsersApi(false);
 
   // eslint-disable-next-line promise/catch-or-return, promise/always-return
   getUserProfileInformationApi().then(response => {

@@ -38,6 +38,7 @@ export const useAuthStore = defineStore(
     const showLogOut = ref<boolean>(false);
     const profileVersion = ref<boolean>(false);
     const userAuth = ref({});
+    const userOriginAuth = ref({});
     const notifications = ref<INotification[]>([]);
     const announcements = ref<UserAnnouncementTypeCustom[]>([]);
     const version = ref<string>();
@@ -54,6 +55,7 @@ export const useAuthStore = defineStore(
 
     function setUserAuth(me: UserType) {
       userAuth.value = me;
+      userOriginAuth.value = me.accounts.filter((item: { type: number }) => item.type === 2).at(0);
     }
 
     function setDirectReconcile(terminalId: string) {
@@ -101,6 +103,7 @@ export const useAuthStore = defineStore(
       spaLoading,
       tourActive,
       userAuth,
+      userOriginAuth,
       version,
     };
   },
@@ -116,6 +119,7 @@ export const useAuthStore = defineStore(
         'showLogOut',
         'spaLoading',
         'userAuth',
+        'userOriginAuth',
         'version',
         'profile_version',
       ],

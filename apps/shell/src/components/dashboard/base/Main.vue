@@ -237,7 +237,7 @@ onMounted(() => {
     });
 
   // eslint-disable-next-line promise/catch-or-return, promise/always-return
-  getBankAccountsApi().then(res => {
+  getBankAccountsApi({}, false).then(res => {
     banckAccounts.value = res.data.items;
   });
 });

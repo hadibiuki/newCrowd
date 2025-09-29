@@ -94,6 +94,7 @@
       :selected-bank-account="selectedBankAccount"
       :selectable="true"
       :is-share="isShare"
+      :is-legual="isLegual"
       @close="toggleModal"
       @select="selectedBank"
       @bank-account-data="onUpdateBankAccount"
@@ -103,7 +104,6 @@
 <script setup lang="ts">
 import { colors } from '../../../../tailwind.config';
 import { useBankQuery } from '@/composables/bank/useBankQuery';
-import { BankAccount } from '@/graphql/graphql';
 import { getBankInfoByNameApi } from '~/restApi/bancAccount';
 
 const bankColors = colors?.colors.bank;
@@ -115,10 +115,12 @@ export interface Props {
   loading?: boolean;
   selectedBankAccount: BankAccount | undefined;
   showDirectReconcileBanks?: boolean;
+  isLegual?: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   isShare: true,
+  isLegual: false,
   selectedBankAccount: undefined,
   isUserBankAccount: false,
   showDirectReconcileBanks: false,

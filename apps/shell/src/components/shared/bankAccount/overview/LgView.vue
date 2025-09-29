@@ -320,17 +320,20 @@ const onSubmit = (pan: any) => {
   loadingCheck.value = true;
   isCardPan.value = pan;
   // eslint-disable-next-line promise/catch-or-return
-  addBankAccountApi({
-    cardNumber: isCardPan.value,
-  })
+  addBankAccountApi(
+    {
+      cardNumber: isCardPan.value,
+    },
+    false
+  )
     // eslint-disable-next-line promise/always-return
     .then(() => {
       showCheckAccount.value = false;
       lastStep.value = 'check';
       accountList.value = true;
 
-      // eslint-disable-next-line promise/catch-or-return
-      getBankAccountsApi().then(res => {
+      // eslint-disable-next-line promise/catch-or-return, promise/no-nesting
+      getBankAccountsApi({}, false).then(res => {
         // eslint-disable-next-line promise/always-return
         data.value = res?.data?.items || [];
         bankAccountListStoe.fill(data.value.items);

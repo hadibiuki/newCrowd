@@ -6,6 +6,6 @@ export async function getUserProfileInformationApi() {
   return await axios.get(USER_PATH + `Users/GetUserProfileInformation`);
 }
 
-export async function showNickNameToOtherUsersApi() {
-  return await axios.patch(USER_PATH + `Users/ChangeNickNameVisibility`);
+export async function showNickNameToOtherUsersApi(legual = true) {
+  return await axios.patch(USER_PATH + `Users/ChangeNickNameVisibility`, null, { legual });
 }

@@ -44,7 +44,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 const authStore = useAuthStore();
-const { showLogOut, userAuth, version } = storeToRefs(authStore);
+const { showLogOut, userOriginAuth: userAuth, version } = storeToRefs(authStore);
 const userAvatar = ref('');
 const toggleModal = () => {
   // eslint-disable-next-line no-const-assign
