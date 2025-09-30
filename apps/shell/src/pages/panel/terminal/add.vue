@@ -1,6 +1,5 @@
 <template>
-  <div class="w-full h-full px-md pb-3xl">
-    <TerminalAddHeader :flag="currentFlag" />
+  <div class="w-full h-full px-md py-3xl">
     <TerminalAddMain @update-flag="updateFlagHandler" />
   </div>
 </template>

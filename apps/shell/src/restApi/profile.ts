@@ -9,3 +9,7 @@ export async function getUserProfileInformationApi() {
 export async function showNickNameToOtherUsersApi(legual = true) {
   return await axios.patch(USER_PATH + `Users/ChangeNickNameVisibility`, null, { legual });
 }
+
+export async function UpdateUserDataApi(body: object) {
+  return await axios.patch(USER_PATH + 'Users/UpdateData', body);
+}

@@ -102,14 +102,15 @@ const handleChangeTerminal = (data: object) => {
   // router.push('/');
 };
 const isRealAccount = computed(() => {
-  if (!userAuth || !userAuth.accounts) {
+  console.log({userAuth:userAuth.value.accounts})
+  if (!userAuth.value || !userAuth.value.accounts) {
     return false;
   }
-  const realAccound = userAuth.accounts.filter(el => el.isLoginAccount)[0];
+  const realAccound = userAuth.value.accounts.filter(el => el.isLoginAccount)[0];
   if (realAccound.type !== 2) {
     return false;
   }
-  const idOwner = userAuth.accounts.filter(el=> el.isMainOwner)
+  const idOwner = userAuth.value.accounts.filter(el=> el.isMainOwner)
   if (idOwner.length) {
     return false;
   }
