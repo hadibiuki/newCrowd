@@ -1,108 +1,116 @@
 <template>
   <div class="flex flex-col h-full">
-    <form @submit.prevent="onSubmit">
-      <span class="flex justify-end text-heading-600-h2 text-text">
-        {{ $t('terminal.phoneNumber') }}
-      </span>
-      <div class="flex flex-col md:flex-row my-xl gap-xl">
-        <div class="flex justify-center">
-          <ui-Illustration name="Telephone" />
-        </div>
-        <div class="flex flex-col gap-xl">
-          <span dir="rtl" class="text-body-400-b3 text-text-soft">
-            {{ $t('terminal.describe') }}
-          </span>
-          <ui-TextField
-            v-model="phoneNumber"
-            :disabled="loading || loadingTerminal"
-            class="w-full xxx"
-            name="phoneNumber"
-            is-number
-            :helper="{
-              type: !!errors?.phoneNumber ? 'error' : undefined,
-              message: errors?.phoneNumber,
-            }"
-            :loading="loadingTerminal"
-            label
-            :placeholder="$t('terminal.phoneNumber')"
-            @update:model-value="updateActions"
-          >
-          </ui-TextField>
-        </div>
-      </div>
-      <div class="flex gap-xs">
-        <ui-Button
-          :text="t('_common.buttons.save')"
-          :disabled="loading || disableSubmit || !!errors?.phoneNumber"
-          :loading="loading"
-          @click="onSubmit"
-        />
-        <ui-Button
-          v-if="showCancel"
-          :disabled="loading || disableSubmit"
-          :text="$t('_common.buttons.cancel')"
-          type="secondary"
-          @click="resetForm"
-        />
-      </div>
-    </form>
+    <div class="flex flex-row justify-between item-center">
+      <ui-Button text="دعوت اپراتور" type="light" before-icon="Plus" @click="showModal = true" />
+      <span class="flex justify-end text-heading-600-h2 text-text"> اپراتورها </span>
+    </div>
+    <div class="flex flex-col md:flex-row my-xl gap-xl">
+      <ui-Table
+        v-if="operators.length"
+        :columns="columns"
+        :is-pointer="false"
+        :loading="loading"
+        :items="operators"
+        class="w-full"
+        @hover-row="eventHandler"
+      >
+        <!--  -->
+        <template #item-code="{ avatarFile, fullName, isMainOwner }">
+          <div class="h-fit flex">
+            <ui-Avatar
+              v-if="avatarFile"
+              :src="avatarFile?.url"
+              has-border
+              size="md"
+              shape="rounded"
+            />
+            <ui-Avatar
+              v-else
+              size="md"
+              class-icon="w-md h-md !text-heading-600-h3 flex items-center"
+              shape="rounded"
+            />
+            <div class="flex flex-col mr-sm" dir="rtl">
+              <span class="text-body-400-b2 text-text">{{ fullName }}</span>
+              <span class="text-body-400-b3 text-text-soft">{{
+                isMainOwner ? 'مالک' : 'اپراتور'
+              }}</span>
+            </div>
+          </div>
+        </template>
+        <template #item-action="{ id, isMainOwner }">
+          <div class="flex justify-end">
+            <ui-Action
+              :id="id"
+              v-model:eventType="eventType"
+              :selected-id="idValue"
+              :limit="2"
+              :items="actionHandle(id, isMainOwner, callbackAction)"
+              dir="rtl"
+              @id-value="idValueHandler"
+            />
+          </div>
+        </template>
+      </ui-Table>
+    </div>
   </div>
+
+  <SettingsBaseOperatorModal
+    :show-template-modal="showModal"
+    @close="showModal = false"
+    @cancel="showModal = false"
+  />
+  <!-- @confirm="handleConfirm" -->
 </template>
 <script setup lang="ts">
-import { usePhoneNumberSchema } from '@/composables/setting/usePhoneNumberSchema';
-import { useTerminalMutation } from '@/composables/terminal/useTerminalMutation';
-import { useTerminalQuery } from '@/composables/terminal/useTerminalQuery';
+import { getOperatorListsApi } from '~/restApi/legals';
 
-const { $notify } = useNuxtApp();
-const t = useI18n();
-const { schema } = usePhoneNumberSchema();
-const { handleSubmit, errors, setFieldError } = useForm({
-  validationSchema: schema,
-});
-const { activeTerminal, refetch, loading: loadingTerminal, onResult } = useTerminalQuery();
-const { terminalEdit } = useTerminalMutation();
-type validateType = 'bank_account_id' | 'phoneNumber';
-const { snakeToCamel } = useSnakeToCamel();
-const { mutate, onDone, loading } = terminalEdit((input, message, params) =>
-  setFieldError(snakeToCamel(input) as validateType, t('_validation.' + message, params))
-);
-const showCancel = ref(false);
-const disableSubmit = ref(true);
-const resetActions = () => {
-  showCancel.value = false;
-  disableSubmit.value = true;
+const columns = ref([
+  {
+    id: 1,
+    label: 'لیست اپراتور‌ها',
+    name: 'code',
+    width: 'minmax(210px,1fr)',
+  },
+  {
+    id: 5,
+    label: '',
+    name: 'action',
+    width: '80px',
+  },
+]);
+const loading = ref(false);
+const showModal = ref(false);
+// const { $notify } = useNuxtApp();
+// const t = useI18n();
+const idValue = ref();
+const eventType = ref();
+const idValueHandler = (value: string) => {
+  idValue.value = value;
 };
+const { actionHandle } = useOperatorAction();
 onMounted(() => {
-  refetch();
+  fetch();
 });
-const onSubmit = handleSubmit(values => {
-  mutate({
-    id: activeTerminal.value?.id,
-    bank_account_id: activeTerminal.value?.preferred_bank_account_id,
-    support_phone: values.phoneNumber,
-  });
-});
-onDone(() => {
-  refetch();
-  $notify({
-    isRead: false,
-    message: t('common.success'),
-    type: 'success',
-  });
-  resetActions();
-});
-const phoneNumber = ref<string>(activeTerminal.value?.support_phone ?? '');
-const updateActions = () => {
-  disableSubmit.value = false;
-  showCancel.value = true;
+const operators = ref([]);
+const fetch = async () => {
+  try {
+    const res = await getOperatorListsApi();
+    // eslint-disable-next-line no-console
+    operators.value = res.data.items;
+    console.log({ res: operators.value });
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.log({ err });
+  }
 };
-const resetForm = () => {
-  phoneNumber.value = activeTerminal.value?.support_phone;
-  resetActions();
+const eventHandler = (event: MouseEvent, item: object) => {
+  eventType.value = { event: event.type, uniqueId: item.id };
 };
-onResult(() => {
-  phoneNumber.value = activeTerminal.value?.support_phone ?? '';
-});
+
+const callbackAction = (id: string) => {
+  console.log('fuck in here', id);
+};
 </script>
 <style lang="scss">
 input#phoneNumber {

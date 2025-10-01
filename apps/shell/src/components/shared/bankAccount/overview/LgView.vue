@@ -192,8 +192,11 @@ export interface Props {
   selectable?: boolean;
   isShare?: boolean;
   selectedBankAccount: BankAccount | undefined;
+  isLegual?: boolean;
 }
-
+const props = withDefaults(defineProps<Props>(), {
+  isLegual: false,
+});
 const store = useBankAccountStore();
 const emit = defineEmits(['close', 'select']);
 const closeModal = () => {
@@ -209,7 +212,6 @@ const { errors, meta } = useForm({
   validationSchema: schema,
 });
 const loading = ref(false)
-const props = withDefaults(defineProps<Props>(), {});
 const { isShare, selectedBankAccount } = toRefs(props);
 const showAlertChecking = ref(false);
 const disableSubmitButton = ref(false);
@@ -324,7 +326,7 @@ const onSubmit = (pan: any) => {
     {
       cardNumber: isCardPan.value,
     },
-    false
+    props.isLegual
   )
     // eslint-disable-next-line promise/always-return
     .then(() => {

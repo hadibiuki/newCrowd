@@ -4,6 +4,7 @@
     :is-share="isShare"
     :selectable="selectable"
     :selected-bank-account="selectedBankAccount"
+    :is-legual="isLegual"
     @select="handleExposer"
   />
   <SharedBankAccountOverviewLgView
@@ -11,6 +12,7 @@
     :is-share="isShare"
     :selectable="selectable"
     :selected-bank-account="selectedBankAccount"
+    :is-legual="isLegual"
     @select="handleExposer"
   />
 </template>

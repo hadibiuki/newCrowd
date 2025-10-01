@@ -107,7 +107,6 @@ const terminalStore = useTerminalStore();
 const store = useNavigateStore();
 const t = useI18n();
 const authStore = useAuthStore();
-
 interface MenuItem {
   name: string;
   icon: string;
@@ -207,37 +206,16 @@ const list = computed<MenuItem[]>(() => [
       !authStore.profileVersion,
     disabled: activeTerminal?.value?.status === TerminalStatusEnum.Pending,
   },
-
-  //  <NuxtLink to="/panel/referral">
-  //         <ui-Nav-Link
-  //           :label="$t('notif_settings.referrer')"
-  //           class="referral-item"
-  //           :arrow="false"
-  //           icon="Referral"
-  //         />
 ]);
 const footerList = computed(() => {
-  if (authStore.profileVersion) {
+  if (authStore.userAuth && authStore.userAuth.type === 1) {
     return [
       {
         name: 'settings',
         icon: 'SettingsRound',
         permission: TerminalPermissionEnum.TerminalEdit,
-        label: t('_common.links.terminal_settings'),
-        active: _includes(activeTerminal.value?.permissions, TerminalPermissionEnum.TerminalEdit),
-      },
-    ];
-  } else {
-    return [
-      {
-        name: 'settings',
-        icon: 'SettingsRound',
-        permission: TerminalPermissionEnum.TerminalEdit,
-        label:
-          flag.value === TerminalFlagEnum.Normal
-            ? t('_common.links.terminal_settings')
-            : t('_common.page_title.zarin_link_setting'),
-        active: _includes(activeTerminal.value?.permissions, TerminalPermissionEnum.TerminalEdit),
+        label: 'تنظیمات حساب حقوقی',
+        active: true,
       },
     ];
   }

@@ -60,7 +60,12 @@
 <script setup lang="ts">
 import { debounce } from 'lodash';
 import { BankAccountTypeEnumCustom } from '@/types/bankAccountCustomTypes';
-import { addBankAccountApi, getBankAccountsApi, setCartAsLegualDefaultApi } from '~/restApi/bancAccount';
+import {
+  addBankAccountApi,
+  getBankAccountsApi,
+  setCartAsLegualDefaultApi,
+} from '~/restApi/bancAccount';
+
 const bankAccountListStoe = useBankAccountList();
 const { $notify } = useNuxtApp();
 type step = 'list' | 'check' | 'add';
@@ -68,7 +73,11 @@ export interface Props {
   selectable?: boolean;
   isShare?: boolean;
   selectedBankAccount: BankAccount | undefined;
+  isLegual?: boolean;
 }
+const props = withDefaults(defineProps<Props>(), {
+  isLegual: false,
+});
 const store = useBankAccountStore();
 const accountList = ref(true);
 const showCheckAccount = ref();
@@ -81,7 +90,6 @@ const lastStep = ref<step>();
 const config = useRuntimeConfig();
 const currentPage = ref(config.public.page);
 const t = useI18n();
-const props = withDefaults(defineProps<Props>(), {});
 const { isShare, selectedBankAccount } = toRefs(props);
 const linkValue = ref(
   isShare.value ? BankAccountTypeEnumCustom.All : BankAccountTypeEnumCustom.Personal
@@ -176,7 +184,7 @@ const goBackToStepOne = () => {
   }
 };
 const { windowSize } = useSize();
-const loadingCheck = ref(false)
+const loadingCheck = ref(false);
 const onSubmit = (pan: any) => {
   loadingCheck.value = true;
   isCardPan.value = pan;
@@ -185,7 +193,7 @@ const onSubmit = (pan: any) => {
     {
       cardNumber: isCardPan.value,
     },
-    false
+    props.isLegual
   )
     // eslint-disable-next-line promise/always-return
     .then(() => {

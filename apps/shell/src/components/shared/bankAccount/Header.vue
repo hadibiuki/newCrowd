@@ -104,7 +104,6 @@
 <script setup lang="ts">
 import { colors } from '../../../../tailwind.config';
 import { useBankQuery } from '@/composables/bank/useBankQuery';
-import { getBankInfoByNameApi } from '~/restApi/bancAccount';
 
 const bankColors = colors?.colors.bank;
 const showBankAccount = ref<boolean>(false);

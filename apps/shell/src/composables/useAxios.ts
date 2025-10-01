@@ -16,7 +16,6 @@ function createAxios(): AxiosInstance {
     baseURL: 'https://zarincrowd-develop.c68.darkube.app/',
     headers: {
       Authorization: `Bearer ${token()}` || null,
-      'Content-Type': 'application/json',
     },
     timeout: 10000,
   };

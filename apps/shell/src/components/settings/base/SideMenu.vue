@@ -95,7 +95,7 @@ const menu: MenuItem[] = [
     section: SectionTypes.Info,
     subMenu: [
       {
-        title: t('_common.slug.port_specifications'),
+        title: 'مشخصات حساب',
         icon: 'DocumentText',
         value: undefined,
         disabled: false,
@@ -106,15 +106,9 @@ const menu: MenuItem[] = [
     section: SectionTypes.Account,
     subMenu: [
       {
-        title: t('_common.slug.account_period'),
+        title: 'حساب‌های بانکی حقوقی',
         icon: 'CreditCardUser-1',
         value: Menu.Account,
-        disabled: status.value === TerminalStatusEnum.Pending,
-      },
-      {
-        title: t('_common.slug.fee_settings'),
-        icon: 'Switches',
-        value: Menu.Fee,
         disabled: status.value === TerminalStatusEnum.Pending,
       },
     ],
@@ -123,56 +117,9 @@ const menu: MenuItem[] = [
     section: SectionTypes.Support,
     subMenu: [
       {
-        title: t('_common.slug.phone_support'),
+        title: 'اپراتورها',
         icon: 'Phone',
         value: Menu.Contact,
-        disabled: status.value === TerminalStatusEnum.Pending,
-      },
-      {
-        title: t('_common.slug.technical_setting'),
-        icon: 'Website',
-        value: Menu.TechnicalSetting,
-        disabled: status.value === TerminalStatusEnum.Pending,
-      },
-      {
-        title: t('_common.slug.service_payment'),
-        icon: 'MenuBlockCheckmark',
-        value: Menu.Service,
-        disabled: status.value === TerminalStatusEnum.Pending,
-      },
-    ],
-  },
-  {
-    section: SectionTypes.Permission,
-    subMenu: [
-      {
-        title: t('_common.slug.level'),
-        icon: 'UserProfile',
-        value: Menu.Permission,
-        disabled: status.value === TerminalStatusEnum.Pending,
-      },
-    ],
-  },
-  {
-    section: SectionTypes.Ayan,
-    title: t('_terminal.services'),
-    subMenu: [
-      {
-        title: t('_terminal.chnType.ayan'),
-        icon: 'UserAyan',
-        value: Menu.Ayan,
-        disabled: status.value === TerminalStatusEnum.Pending,
-      },
-      {
-        title: t('_common.links.zarin_link'),
-        icon: 'PaymentLinksSetting',
-        value: Menu.Zarin_Link,
-        disabled: status.value === TerminalStatusEnum.Pending,
-      },
-      {
-        title: t('_common.page_title.direct_reconcile'),
-        icon: 'ThunderLightningCircle',
-        value: Menu.DirectReconcile,
         disabled: status.value === TerminalStatusEnum.Pending,
       },
     ],

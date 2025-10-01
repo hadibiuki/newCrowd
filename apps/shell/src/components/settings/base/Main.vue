@@ -3,28 +3,7 @@
     <ui-Card class="w-full h-full">
       <template #main>
         <SettingsBaseAccount v-if="route.query.menu === TerminalSettingsMenus.Account" />
-        <SettingsBasePspList
-          v-else-if="route.query.menu === TerminalSettingsMenus.Service && !md && hasZarinGates"
-        />
-        <SettingsBasePspListMd
-          v-else-if="route.query.menu === TerminalSettingsMenus.Service && md && hasZarinGates"
-        />
         <SettingsBasePhoneNumber v-else-if="route.query.menu === TerminalSettingsMenus.Contact" />
-        <SettingsBaseTechnicalSetting
-          v-else-if="route.query.menu === TerminalSettingsMenus.TechnicalSetting"
-        />
-        <SettingsBaseFee v-else-if="route.query.menu === TerminalSettingsMenus.Fee" />
-        <SettingsBaseAyan v-else-if="route.query.menu === TerminalSettingsMenus.UserAyan" />
-        <SettingsBaseZarinLink v-else-if="route.query.menu === TerminalSettingsMenus.Zarin_Link" />
-        <SettingsBaseDirectReconcile
-          v-else-if="route.query.menu === TerminalSettingsMenus.DirectReconcile"
-        />
-        <SettingsBasePermissionLgGrid
-          v-else-if="route.query.menu === TerminalSettingsMenus.Permission && !md"
-        />
-        <SettingsBasePermissionMdGrid
-          v-else-if="route.query.menu === TerminalSettingsMenus.Permission && md"
-        />
         <SettingsBasePortspecifications v-else />
       </template>
     </ui-Card>

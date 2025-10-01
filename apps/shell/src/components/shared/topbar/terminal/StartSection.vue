@@ -64,7 +64,7 @@ const onTicket = () => {
 };
 const userAvatar = ref('');
 const authStore = useAuthStore();
-const { announcements, userAuth } = storeToRefs(authStore);
+const { announcements, userOriginAuth: userAuth } = storeToRefs(authStore);
 const notifyCount = computed(() => {
   if (announcements.value?.length) {
     const count = announcements.value.filter(item => !item.isRead).length;
