@@ -1,7 +1,7 @@
 <template>
   <button class="root" :class="{ 'cursor-not-allowed': disabled }">
     <div
-      class="root__item"
+      class="root__item w-full"
       :class="[
         !arrow && !label ? 'justify-center' : 'justify-between',
         disabled ? 'text-text-disabled' : '',
@@ -10,6 +10,7 @@
       <div class="root__item__end">
         <div v-if="arrow" class="root__item__arrow">
           <Skeleton v-if="loading" class="mt-2xs" :width="24" :height="24" />
+          <Icon v-else-if="isOpen" name="AngleUp" :class="{ active }" />
           <Icon v-else name="AngleLeft" :class="{ active }" />
         </div>
         <div v-if="$slots.meta">
@@ -57,6 +58,7 @@ export interface Props {
   loading?: boolean;
   disabled?: boolean;
   isVerticalLabel?: boolean;
+  isOpen?: boolean;
   status?: {
     type: string;
     text: string;
@@ -71,6 +73,7 @@ const props = withDefaults(defineProps<Props>(), {
   label: '',
   subText: '',
   status: undefined,
+  isOpen: false,
 });
 const { status } = toRefs(props);
 const labelClasses = computed(() => [

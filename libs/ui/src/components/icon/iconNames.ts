@@ -42,6 +42,7 @@ export const names = [
   'Close',
   'Cloud',
   'CodeBlock',
+  'Coins',
   'Copy',
   'Coupon',
   'CreditCardCheckmark',

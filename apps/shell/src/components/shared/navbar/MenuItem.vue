@@ -3,10 +3,59 @@
     <!-- list -->
     <div dir="ltr" class="pb-xs mx-md">
       <div v-for="item in list" :key="item.label" :ref="item.active ? item.name : undefined">
+        <div v-if="item.children" class="mb-xs">
+          <ui-NavLink
+            :icon="item.icon"
+            :label="
+              store.navigateState === Nav.EXPANDED || store.menuState === Status.VISIBLE
+                ? item.label
+                : ''
+            "
+            :arrow="store.navigateState === Nav.EXPANDED ? true : false"
+            :class="[activeRoute(item.name) ? '!bg-surface-primary' : '', 'justify-end flex']"
+            :active="activeRoute(item.name)"
+            :disabled="item.disabled"
+            :status="item.status"
+            :is-open="item.open"
+            @click="item.open = !item.open"
+          />
+          <span v-if="item.open && store.navigateState">
+            <div
+              v-for="(child,index) in item.children"
+              :key="child.name"
+              :ref="child.active ? child.name : undefined"
+            >
+              <NuxtLink
+                :to="{ path: `/panel/${terminalStore.currentDomain}/${child.name}` }"
+                class="mb-xs block relative"
+                :class="{
+                  'active-item': activeRoute(child.name),
+                  'mt-xs': index === 0,
+                }"
+              >
+                <ui-NavLink
+                  :icon="child.icon"
+                  :label="
+                    store.navigateState === Nav.EXPANDED || store.menuState === Status.VISIBLE
+                      ? child.label
+                      : ''
+                  "
+                  :arrow="false"
+                  :class="[
+                    activeRoute(child.name) ? '!bg-surface-primary' : '',
+                    'justify-end flex',
+                  ]"
+                  :active="activeRoute(child.name)"
+                  :status="child.status"
+                />
+              </NuxtLink>
+            </div>
+          </span>
+        </div>
         <NuxtLink
-          v-if="item.active"
+          v-else
           :to="
-            item.disabled
+            item.children
               ? undefined
               : { path: `/panel/${terminalStore.currentDomain}/${item.name}` }
           "
@@ -100,7 +149,7 @@
 
 <script setup lang="ts">
 import { useTerminalQuery } from '@/composables/terminal/useTerminalQuery';
-import { TerminalPermissionEnum, TerminalFlagEnum, TerminalStatusEnum } from '@/graphql/graphql';
+import { TerminalPermissionEnum } from '@/graphql/graphql';
 const emit = defineEmits(['complete']);
 const { activeTerminal, loading: terminalLoading, onResult } = useTerminalQuery();
 const terminalStore = useTerminalStore();
@@ -108,6 +157,7 @@ const store = useNavigateStore();
 const t = useI18n();
 const authStore = useAuthStore();
 interface MenuItem {
+  open: any;
   name: string;
   icon: string;
   label: string;
@@ -119,10 +169,10 @@ interface MenuItem {
     text: string;
     isHorizontal: boolean;
   };
+  children?: MenuItem[];
 }
 const route = useRoute();
-const flag = computed(() => activeTerminal.value?.flag);
-const list = computed<MenuItem[]>(() => [
+const menuItems = ref([
   {
     name: 'dashboard',
     icon: 'GridLayout',
@@ -131,89 +181,52 @@ const list = computed<MenuItem[]>(() => [
     disabled: false,
   },
   {
+    name: 'investWrapper',
+    icon: 'Referral',
+    label: 'سرمایه‌گذاری',
+    active: true,
+    disabled: false,
+    open: false,
+    children: [
+      {
+        name: 'investments',
+        icon: '',
+        label: 'فرصت‌های سرمایه‌گذاری',
+        active: true,
+        disabled: false,
+      },
+      {
+        name: 'investments/history',
+        icon: '',
+        label: 'سوابق سرمایه‌گذاری',
+        active: true,
+        disabled: false,
+      },
+    ],
+  },
+  {
     name: 'session',
     icon: 'Transaction',
     label: t('_common.links.session'),
-    permission: TerminalPermissionEnum.Session,
-    active: _includes(activeTerminal.value?.permissions, TerminalPermissionEnum.Session),
-    disabled: activeTerminal?.value?.status === TerminalStatusEnum.Pending,
-  },
-  {
-    name: 'reconciliation',
-    icon: 'Reconciliation',
-    label: t('_common.links.reconcile'),
-    permission: TerminalPermissionEnum.Reconcile,
-    active: _includes(activeTerminal.value?.permissions, TerminalPermissionEnum.Reconcile),
-    disabled: activeTerminal?.value?.status === TerminalStatusEnum.Pending,
-  },
-  {
-    name: 'instant-payout',
-    icon: 'InstantPayout',
-    label: t('_common.links.instant_payout'),
-    permission: TerminalPermissionEnum.InstantPayout,
-    active:
-      _includes(activeTerminal.value?.permissions, TerminalPermissionEnum.InstantPayout) &&
-      !authStore.profileVersion,
-    disabled: activeTerminal?.value?.status === TerminalStatusEnum.Pending,
-  },
-  {
-    name: 'payout',
-    icon: 'Payout',
-    label: t('_common.links.payout'),
-    permission: TerminalPermissionEnum.Payout,
-    active:
-      (_includes(activeTerminal.value?.permissions, TerminalPermissionEnum.Payout) ||
-        _includes(activeTerminal.value?.permissions, TerminalPermissionEnum.WagePayout)) &&
-      !authStore.profileVersion,
-    disabled: activeTerminal?.value?.status === TerminalStatusEnum.Pending,
-  },
-  {
-    name: 'invoice',
-    icon: 'BillScan',
-    label: t('_common.links.invoice'),
-    permission: TerminalPermissionEnum.Invoice,
-    active:
-      false /* _includes(activeTerminal.value?.permissions, TerminalPermissionEnum.Invoice) */,
-    disabled: activeTerminal?.value?.status === TerminalStatusEnum.Pending,
-  },
-  {
-    name: 'coupon',
-    icon: 'Coupon',
-    label: t('_common.links.coupon'),
-    permission: TerminalPermissionEnum.Coupon,
-    active:
-      _includes(activeTerminal.value?.permissions, TerminalPermissionEnum.Coupon) &&
-      !authStore.profileVersion,
-    disabled: activeTerminal?.value?.status === TerminalStatusEnum.Pending,
-  },
-  {
-    name: 'zarin-link',
-    icon: 'ZarinLink',
-    label: t('_common.links.zarin_link'),
-    permission: TerminalPermissionEnum.Zarinlink,
-    active:
-      _includes(activeTerminal.value?.permissions, TerminalPermissionEnum.Zarinlink) &&
-      !authStore.profileVersion,
-    disabled: activeTerminal?.value?.status === TerminalStatusEnum.Pending,
+    active: true,
+    disabled: false,
   },
   {
     name: 'referral',
     icon: 'Referral',
     label: t('_common.links.referral_code'),
-    permission: true,
-    active:
-      _includes(activeTerminal.value?.permissions, TerminalPermissionEnum.Zarinlink) &&
-      !authStore.profileVersion,
-    disabled: activeTerminal?.value?.status === TerminalStatusEnum.Pending,
+    active: true,
+    disabled: false,
   },
 ]);
+const list = computed<MenuItem[]>(() => menuItems.value);
 const footerList = computed(() => {
   if (authStore.userAuth && authStore.userAuth.type === 1) {
     return [
       {
         name: 'settings',
         icon: 'SettingsRound',
-        permission: TerminalPermissionEnum.TerminalEdit,
+        permission: true,
         label: 'تنظیمات حساب حقوقی',
         active: true,
       },
@@ -227,6 +240,8 @@ const activeRoute = (name: string) => {
       : _includes(route.name, 'instant-payout');
   } else if (name === 'dashboard') {
     return _includes(route.name, 'daily-records') || _includes(route.name, 'dashboard');
+  } else if (name === 'investments/history' || name === 'history') {
+    return _includes(route.name, 'investments/history') || _includes(route.name, 'history');
   } else {
     return _includes(route.name, name);
   }
@@ -243,6 +258,7 @@ const onClickMenuItem = (item: MenuItem) => {
   }
   store.toggleNavigatorInSidebar();
 };
+
 </script>
 
 <style lang="scss" scoped>
