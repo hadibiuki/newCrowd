@@ -25,10 +25,10 @@ export async function AcceptInvitationsOperatorsApi(invitation_code: string, is_
   return await axios.post(USER_PATH + `Users/Me/Invitations/${invitation_code}`, { is_accepted });
 }
 
-// export async function deletOperatorApi(id) {
-//     return await deleteData(USER_PATH + `Legals/Operators/${id}`)
-// }
+export async function deletOperatorApi(id: string) {
+  return await axios.delete(USER_PATH + `Legals/Operators/${id}`);
+}
 
-// export async function InvitationsOperatorsApi(invitation_code) {
-//     return await getData(USER_PATH + `Users/Me/Invitations/${invitation_code}`)
-// }
+export async function InvitationsOperatorsApi(invitation_code: string) {
+  return await axios.get(USER_PATH + `Users/Me/Invitations/${invitation_code}`);
+}

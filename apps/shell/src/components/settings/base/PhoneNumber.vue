@@ -60,10 +60,19 @@
     @close="showModal = false"
     @cancel="showModal = false"
   />
-  <!-- @confirm="handleConfirm" -->
+  <SharedShareModalConfirm
+    v-if="showConfirm"
+    submit-label="_common.buttons.continue"
+    cancel-label="_common.buttons.cancel_event"
+    description="آیا از حذف این اپراتور مطمن هستید؟"
+    :loading="loading"
+    @close="showConfirm = false"
+    @confirm="handleConfirm"
+    @cancel="showConfirm = false"
+  />
 </template>
 <script setup lang="ts">
-import { getOperatorListsApi } from '~/restApi/legals';
+import { deletOperatorApi, getOperatorListsApi } from '~/restApi/legals';
 
 const columns = ref([
   {
@@ -81,7 +90,7 @@ const columns = ref([
 ]);
 const loading = ref(false);
 const showModal = ref(false);
-// const { $notify } = useNuxtApp();
+const { $notify } = useNuxtApp();
 // const t = useI18n();
 const idValue = ref();
 const eventType = ref();
@@ -96,20 +105,45 @@ const operators = ref([]);
 const fetch = async () => {
   try {
     const res = await getOperatorListsApi();
-    // eslint-disable-next-line no-console
     operators.value = res.data.items;
-    console.log({ res: operators.value });
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.log({ err });
+    $notify({
+      isRead: false,
+      message: err.message,
+      type: 'error',
+    });
   }
 };
 const eventHandler = (event: MouseEvent, item: object) => {
   eventType.value = { event: event.type, uniqueId: item.id };
 };
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+let idSelected = '';
+const showConfirm = ref(false);
 const callbackAction = (id: string) => {
-  console.log('fuck in here', id);
+  idSelected = id.split('.')?.at(1);
+  showConfirm.value = true;
+};
+const handleConfirm = () => {
+  loading.value = true;
+  // eslint-disable-next-line promise/catch-or-return, promise/always-return
+  deletOperatorApi(idSelected)
+    // eslint-disable-next-line promise/always-return
+    .then(() => {
+      showConfirm.value = false;
+      fetch();
+    })
+    .catch(err => {
+      $notify({
+        isRead: false,
+        message: err.message,
+        type: 'error',
+      });
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 </script>
 <style lang="scss">
