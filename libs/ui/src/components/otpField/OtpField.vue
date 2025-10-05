@@ -6,6 +6,7 @@
         :key="index"
         ref="inputRefs"
         v-model="otp[index - 1]"
+        :disabled="loading"
         class="otp__input"
         :class="{
           'otp__input__inner--error': isError,
@@ -40,6 +41,7 @@ import Icon from '../icon/Icon.vue';
 export interface Props {
   codeLength?: number;
   modelValue: number | string;
+  loading: boolean;
   name?: string;
   helper?: {
     type: 'error' | 'success' | 'info' | undefined;
@@ -54,7 +56,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const nonNumericCharactersRegex = /[^0-9٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹]/g;
 const { codeLength, modelValue, name } = toRefs(props);
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'update']);
 const { errors, handleChange } = useField(() => name.value, undefined, {
   initialValue: modelValue,
 });
@@ -82,6 +84,7 @@ const focusOrSubmit = async (val: Event, index: number) => {
   } else {
     otp.value[index - 1] = null;
   }
+  emit('update');
   submit();
 };
 const focusOnPrev = (e: KeyboardEvent, index: number) => {

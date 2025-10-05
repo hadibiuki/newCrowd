@@ -1,6 +1,11 @@
 <template>
   <div class="input">
-    <div ref="controller" dir="rtl" :class="[styleValue]" class="group input__inner">
+    <div
+      ref="controller"
+      dir="rtl"
+      :class="[styleValue]"
+      class="group input__inner border border-border rounded-sm"
+    >
       <!-- label -->
       <Transition name="label">
         <div v-if="showLabel && label" class="input__inner__label">
@@ -26,12 +31,13 @@
           :placeholder="!showLabel && !loading ? placeholder : ''"
           :readonly="loading"
           spellcheck="false"
+          :type="type"
           @blur="blurInput"
           @focus="focusInput"
           @input="handleInput"
           @keypress="onlyNumber"
         />
-        <div v-if="afterIcon" class="flex items-center">
+        <div v-if="afterIcon" class="flex items-center cursor-pointer">
           <Icon
             :name="afterIcon"
             class="input__inner__icon--after"
@@ -48,7 +54,7 @@
         </div>
       </div>
     </div>
-    <div class="input__description" :dir="isLtr ? 'ltr' : 'rtl'">
+    <div class="input__description" :dir="!isLtr ? 'ltr' : 'rtl'">
       <!-- helper -->
       <div>
         <div v-if="helper" class="input__description__helper" dir="rtl">
@@ -97,6 +103,7 @@ export interface Props {
   beforeIcon?: string;
   afterIcon?: string;
   unit?: string;
+  type?: string;
   autoFocus?: boolean;
   button?: string;
   helper?: {
@@ -111,6 +118,7 @@ export interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  type: '',
   placeholder: '',
   modelValue: '',
   beforeIcon: undefined,
@@ -124,7 +132,7 @@ const props = withDefaults(defineProps<Props>(), {
   maxLength: 0,
   isLtr: false,
   inputCustomClass: '',
-  showMaxLengthLimit: true,
+  showMaxLengthLimit: false,
 });
 // emits
 defineEmits(['buttonAction', 'update:modelValue']);
@@ -183,7 +191,7 @@ const styleValue = computed(() => {
     return 'input__inner--disabled';
   }
 
-  return 'input__inner--default';
+  return '';
 });
 const handleLabel = (ctx: boolean) => {
   if (ctx && placeholder.value && !loading.value && label.value) {

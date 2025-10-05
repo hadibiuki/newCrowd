@@ -13,16 +13,9 @@
       <div class="terminal-section" dir="rtl">
         <div class="terminal-section__root overflow-hidden">
           <div class="flex gap-sm">
-            <ui-Skeleton :width="40" :height="40" :loading="loading">
+            <ui-Skeleton :width="40" :height="40" :loading="!userAuth">
               <div class="relative">
-                <SharedTerminalLogo
-                  :logo="activeTerminal?.have_logo ? activeTerminal?.logo : undefined"
-                  active
-                />
-                <SharedDirectReconcile
-                  v-if="isActiveDirectReconcile"
-                  class="absolute left-[-2px] bottom-[-2px]"
-                />
+                <SharedTerminalLogo active />
               </div>
             </ui-Skeleton>
             <div
@@ -33,14 +26,14 @@
                   : 'opacity-0'
               "
             >
-              <ui-Skeleton :width="40" :loading="loading">
+              <ui-Skeleton :width="40" :loading="!userAuth">
                 <div class="text-body-400-b2 font-medium truncate max-w-[135px]" dir="rtl">
-                  {{ activeTerminal?.name }}
+                  {{ userAuth?.fullName }}
                 </div>
               </ui-Skeleton>
-              <ui-Skeleton :width="40" :height="5" :loading="loading">
+              <ui-Skeleton :width="40" :height="5" :loading="!userAuth">
                 <div class="text-caption-400-c1 truncate max-w-[135px]">
-                  {{ activeTerminal?.domain }}
+                  {{ userAuth?.type === 1 ? 'حقوقی' : 'حقیقی' }}
                 </div>
               </ui-Skeleton>
             </div>
@@ -48,7 +41,7 @@
           <ui-Skeleton
             :width="16"
             :height="16"
-            :loading="loading"
+            :loading="!userAuth"
             class="terminal-section__root__arrow"
           >
             <ui-Icon name="AngleLeft" class="transition-opacity ease-in-out duration-600" />
@@ -61,12 +54,12 @@
 
 <script setup lang="ts">
 import { Tippy } from 'vue-tippy';
+import { storeToRefs } from 'pinia';
 import TerminalOverview from '@/components/shared/terminal/TerminalOverview.vue';
-import { useTerminalQuery } from '@/composables/terminal/useTerminalQuery';
-const { activeTerminal, loading } = useTerminalQuery();
+const authStore = useAuthStore();
+const { userAuth } = storeToRefs(authStore);
 const tippyRef = ref<typeof Tippy>();
 const store = useNavigateStore();
-const { isActiveDirectReconcile } = useDirectReconcile();
 // hide terminal popover
 const hide = () => {
   tippyRef.value?.hide();

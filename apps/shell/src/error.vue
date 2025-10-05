@@ -20,8 +20,7 @@ const links = ref({
   about_us: `${config.public.zarin_url}aboutus.html`,
 });
 const handleError = () => {
-  const domain = useTerminalStore().currentDomain;
-  const redirectRoute = domain ? `/panel/${domain}/dashboard` : '/panel/overview';
+  const redirectRoute = '/panel/dashboard';
 
   clearError({ redirect: redirectRoute });
 };

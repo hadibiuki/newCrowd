@@ -1,12 +1,5 @@
-import { ReconcileTypeEnum } from '@/graphql/graphql';
-
-export default defineNuxtRouteMiddleware(async to => {
-  const { active } = useActiveTerminal();
+export default defineNuxtRouteMiddleware(async (to: { meta: { fallbackRoute: unknown } }) => {
   const router = useRouter();
 
-  if (active?.reconcile_type === ReconcileTypeEnum.DirectReconcile) {
-    return router.push(
-      `/panel/${encodeURIComponent(active?.domain ?? '')}${to.meta.fallbackRoute}`
-    );
-  }
+  return router.push(`/panel/${to.meta.fallbackRoute}`);
 });

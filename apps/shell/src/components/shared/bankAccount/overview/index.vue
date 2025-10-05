@@ -4,16 +4,15 @@
     :is-share="isShare"
     :selectable="selectable"
     :selected-bank-account="selectedBankAccount"
+    :is-legual="isLegual"
     @select="handleExposer"
-    @bank-account-data="
-      (bankAccountList: BankAccount[]) => $emit('bankAccountData', bankAccountList)
-    "
   />
   <SharedBankAccountOverviewLgView
     v-else
     :is-share="isShare"
     :selectable="selectable"
     :selected-bank-account="selectedBankAccount"
+    :is-legual="isLegual"
     @select="handleExposer"
   />
 </template>
@@ -26,10 +25,12 @@ export interface Props {
   isShare?: boolean;
   selectedBankAccount: BankAccount | undefined;
   lg: boolean;
+  isLegual?: boolean;
 }
 const store = useBankAccountStore();
 withDefaults(defineProps<Props>(), {
   isShare: true,
+  isLegual: false,
 });
 
 const emit = defineEmits(['select', 'bankAccountData']);

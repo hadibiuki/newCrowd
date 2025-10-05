@@ -18,10 +18,16 @@
         </div>
       </template>
       <!-- id column template -->
-      <template #item-amount="{ amount, fee }">
-        <div :class="amount === 0 ? 'text-text-danger' : ''" class="flex items-center gap-sm">
-          <span dir="ltr">{{ amount === 0 ? numberFormat(fee * -1) : numberFormat(amount) }}</span>
+      <template #item-amount="{ amount }">
+        <div :class="amount < 0 ? 'text-text-danger' : ''" class="flex items-center gap-sm">
+          <span dir="ltr">{{
+            amount < 0 ? '-' + numberFormat(amount * -1) : numberFormat(amount)
+          }}</span>
         </div>
+      </template>
+
+      <template #item-created_at="{ createdDate }">
+        {{ toJalali(createdDate) }}
       </template>
       <template #item-description="{ amount, description }">
         <div class="flex gap-sm overflow-hidden">
@@ -30,26 +36,9 @@
         </div>
       </template>
       <!-- status template -->
-      <template #item-status="{ status, reconciliation_id, refund_id, refund_status }">
+      <template #item-status="{ state }">
         <div class="h-fit flex gap-2xs">
-          <ui-Status :text="getStatusInfo(status).text" :type="getStatusInfo(status).type" />
-          <ui-Tooltip :content="$t('session.show.time_line.verified')">
-            <ui-Status
-              v-if="SessionStatusEnum.Verified === status"
-              icon="CheckMarkCircleFill"
-              type="informative"
-            />
-          </ui-Tooltip>
-          <ui-Tooltip :content="$t('session.show.time_line.reconciled')">
-            <ui-Status v-if="reconciliation_id" icon="DollarFill" type="positive" />
-          </ui-Tooltip>
-          <ui-Tooltip :content="$t('refund.title')">
-            <ui-Status
-              v-if="refund_id && refund_status && status !== 'REJECTED'"
-              icon="RefundFill"
-              type="warning"
-            />
-          </ui-Tooltip>
+          <ui-Status :text="getStatusInfo(state).text" :type="getStatusInfo(state).type" />
         </div>
       </template>
 
@@ -84,24 +73,17 @@
 
 <script setup lang="ts">
 import { useSessionColumns } from '@/composables/session/useSessionColumns';
-import { useSessionQuery } from '@/composables/session/useSessionQuery';
 import { useSessionStatus } from '@/composables/session/useSessionStatus';
-import { SessionStatusEnum } from '@/graphql/graphql';
-import { useTerminalStore } from '@/stores/terminalStore';
+import { getAllTransacionsApi } from '~/restApi/transactions';
+const { toJalali } = useDate();
 
 export interface Props {
   loading: boolean;
 }
-const props = withDefaults(defineProps<Props>(), {});
-const { loading } = toRefs(props);
-const store = useSessionStore();
 const { columns } = useSessionColumns();
 const { getStatusInfo } = useSessionStatus();
-const { data, load, loading: loadingSession } = useSessionQuery().sessionList;
-const router = useRouter();
 const { numberFormat } = useMath();
-const terminal = useTerminalStore();
-store.loading = loadingSession;
+const store = useSessionStore();
 const latestData = computed(() => {
   if (data.value && data.value) {
     return data.value.slice(0, 5);
@@ -109,10 +91,24 @@ const latestData = computed(() => {
 
   return [];
 });
+const data = ref([]);
+const loading = ref(false);
+async function refetchData() {
+  loading.value = true;
+  const body = {
+    pageNumber: 1,
+    pageSize: 5,
+  };
+  const customData = await getAllTransacionsApi(body);
+
+  data.value = customData.data.items;
+  loading.value = false;
+}
 const clicked = (item: { id: string | number }) => {
-  router.push(`/panel/${terminal.currentDomain}/session/${item.id}`);
+  store.detailesData = item;
+  store.showModal = true;
 };
 onMounted(() => {
-  load();
+  refetchData();
 });
 </script>

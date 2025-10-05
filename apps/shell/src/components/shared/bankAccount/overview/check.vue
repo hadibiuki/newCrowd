@@ -39,12 +39,11 @@
           />
           <ui-RadioCard
             v-model="item"
-            :disabled="loadingCheck"
+            disabled="true"
             :tabindex="2"
             val="iban"
             :label="$t('_common.table.iban')"
             name="status"
-            @click="showIban"
           />
         </div>
         <form @submit.prevent="">
@@ -70,7 +69,7 @@
             input-custom-class="font-Mono"
             name="iban"
             unit="IR"
-            :disabled="loadingCheck"
+            disabled="true"
             is-number
             label
             :placeholder="$t('_common.table.iban')"
@@ -85,8 +84,7 @@
             type="primary"
             size="medium"
             :loading="loadingCheck"
-            :disabled="!formMeta?.valid"
-            :text="$t('_kyc.NewSerialCard.button')"
+            :text="$t('_common.buttons.confirm_and_continue')"
             @click="formSubmit"
           />
         </form>
@@ -103,7 +101,6 @@
 </template>
 <script setup lang="ts">
 import { replace } from 'lodash';
-import { FormMeta } from 'vee-validate';
 import { BankAccountTypeEnum } from '@/graphql/graphql';
 const { toEnNumber } = useInput();
 
@@ -119,24 +116,16 @@ const errors:
 export type ErrorsType = globalThis.ComputedRef<
   Partial<Record<'pan' | 'iban', string | undefined>>
 >;
-const formMeta:
-  | globalThis.ComputedRef<
-      FormMeta<
-        Partial<{
-          pan: string;
-          iban: string;
-        }>
-      >
-    >
-  | undefined = inject('form_meta');
-const emit = defineEmits(['select', 'isCardCheck']);
-const formSubmit = inject('form_submit');
+const emit = defineEmits(['select', 'isCardCheck', 'submit']);
+const formSubmit = () => {
+  emit('submit', pan.value);
+};
 const goBackToStepOne = inject<(() => void | undefined) | undefined>('goBackToStepOne');
 const iban = ref('');
 const pan = ref('');
-const isCardPan = ref(false);
-const isIban = ref(true);
-const item = ref('iban');
+const isCardPan = ref(true);
+const isIban = ref(false);
+const item = ref('pan');
 const props = withDefaults(defineProps<Props>(), {});
 const { loadingCheck, navLink } = toRefs(props);
 const showCardPan = () => {
@@ -144,11 +133,11 @@ const showCardPan = () => {
   isCardPan.value = true;
   emit('isCardCheck', { pan: isCardPan.value, iban: isIban.value });
 };
-const showIban = () => {
-  isIban.value = true;
-  isCardPan.value = false;
-  emit('isCardCheck', { pan: isCardPan.value, iban: isIban.value });
-};
+// const showIban = () => {
+//   isIban.value = true;
+//   isCardPan.value = false;
+//   emit('isCardCheck', { pan: isCardPan.value, iban: isIban.value });
+// };
 const normalizePan = (value: string) => {
   const character = toEnNumber(value);
   const val = replace(character, /\D/g, '');

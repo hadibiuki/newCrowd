@@ -1,31 +1,21 @@
 <template>
   <div>
     <div class="flex flex-col items-center pt-md pb-lg gap-xl">
-      <ui-Illustration :name="illustration" />
       <slot v-if="!!slots['description']" name="description"></slot>
       <span v-else-if="description" class="text-body-400-b2 text-text-soft break-words">{{
         description
       }}</span>
-
       <ui-OtpField
         v-model="otp"
         :loading="loading"
-        :helper="hander"
+        :helper="handler"
+        :code-length="codeLength"
         name="otp"
         class="w-full !justify-between"
         @update:model-value="verifyOtp"
+        @update="emit('changeotp')"
       />
       <div class="flex justify-center gap-sm">
-        <template v-if="showEdit && !loading">
-          <ui-Button
-            type="tertiary"
-            size="medium"
-            variant="text"
-            :text="$t('session.export.edit_email')"
-            @click="emit('edit')"
-          />
-          <ui-Divider type="vertical" />
-        </template>
         <ui-Button
           v-if="timer === 0 || loading"
           type="tertiary"
@@ -39,6 +29,10 @@
           <span class="w-xl">{{ formattedTime }}</span>
           {{ $t('notif_settings.resend_otp_timer') }}
         </span>
+        <template v-if="showEdit && !loading">
+          <ui-Divider type="vertical" />
+          <ui-Button type="tertiary" variant="text" :text="editTitle" @click="emit('edit')" />
+        </template>
       </div>
     </div>
   </div>
@@ -51,26 +45,30 @@ export interface Props {
   showEdit?: boolean;
   loading: boolean;
   remaining?: number;
-  hander?: { type: 'error' | 'success' | 'info'; message: string };
+  handler?: { type: 'error' | 'success' | 'info'; message: string };
   resetTimer: boolean;
+  editTitle: string;
+  codeLength?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   emailVal: '',
   description: '',
+  editTitle: '',
   type: 'email',
   showEdit: true,
   loading: false,
-  remaining: 600,
-  hander: () => ({
+  remaining: 120,
+  codeLength: 6,
+  handler: () => ({
     message: '',
     type: 'info',
   }),
-  resetTimer: false,
+  resetTimer: true,
 });
-const { type, remaining } = toRefs(props);
+const { remaining } = toRefs(props);
 const slots = useSlots();
-const emit = defineEmits(['handleStep', 'resend', 'verify', 'edit']);
+const emit = defineEmits(['handleStep', 'resend', 'verify', 'edit', 'changeotp']);
 const otp = ref();
 const verifyOtp = () => {
   emit('verify', otp.value);
@@ -80,9 +78,9 @@ const resendOtp = () => {
   emit('resend');
 };
 const { start, timer, formattedTime, reset } = useCountDown('otp', remaining.value, () => {
+  console.log({ remaining: remaining.value });
   // emit('handleStep', ExportModalEnum.VerifyEmail);
 });
-const illustration = computed(() => (type.value === 'email' ? 'ProductPaymentLink' : 'Otp'));
 watch(
   () => props.resetTimer,
   newValue => {
@@ -94,5 +92,4 @@ watch(
 );
 
 export type ErrorsType = globalThis.ComputedRef<Partial<Record<'otp', string | undefined>>>;
-// const errors: ErrorsType | undefined = inject('errors');
 </script>

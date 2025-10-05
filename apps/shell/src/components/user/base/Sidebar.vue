@@ -45,42 +45,6 @@ const menu = [
         icon: 'Cards',
         value: Menu.bankAccount,
       },
-
-      {
-        title: t('_address.title'),
-        icon: 'LocationAddress',
-        value: Menu.address,
-      },
-    ],
-  },
-  {
-    section: 3,
-    subMenu: [
-      {
-        title: t('_user.notification.title'),
-        icon: 'Notification',
-        value: Menu.notification,
-      },
-      {
-        title: t('_user.accessToken.title'),
-        icon: 'CheckMarkCircleOutlined',
-        value: Menu.accessToken,
-      },
-      {
-        title: t('_user.notification.connected_apps'),
-        icon: 'AttachmentLink',
-        value: Menu.connectApp,
-      },
-    ],
-  },
-  {
-    section: 4,
-    subMenu: [
-      {
-        title: t('_terminal.title'),
-        icon: 'BuildingCityDownTown',
-        value: Menu.terminal,
-      },
     ],
   },
 ];

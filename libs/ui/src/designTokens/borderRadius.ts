@@ -1,6 +1,7 @@
 export default {
   borderRadius: {
     circle: '100%',
+    full: '999px',
     lg: '12px',
     md: '8px',
     none: 0,

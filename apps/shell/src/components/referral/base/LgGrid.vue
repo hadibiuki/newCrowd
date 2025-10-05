@@ -11,16 +11,25 @@
           </div>
         </ui-Skeleton>
       </template>
-      <template #item-name="{ name, id, avatar }">
+      <template #item-name="{ fullName, id, avatarFile }">
         <ui-Skeleton :loading="loading" :width="40" class="mt-2xs truncate">
           <div class="flex gap-sm">
-            <ui-Avatar :src="avatar" />
+            <ui-Avatar :src="avatarFile && avatarFile.url ? avatarFile.url : ''" />
             <div class="h-fit flex flex-col -mt-2xs">
-              <span class="truncate">{{ name }}</span>
-              <span class="text-text-soft text-body-400-b3">ZP.{{ id }}</span>
+              <span class="truncate">{{ fullName }}</span>
+              <span class="text-text-soft text-body-400-b3">{{ id }}</span>
             </div>
           </div>
         </ui-Skeleton>
+      </template>
+      <template #item-commission="{ totalIncome }">
+        <span>{{ numberFormat(totalIncome) }}</span>
+      </template>
+      <template #item-last_session_time="{ lastIncome }">
+        <span>{{ numberFormat(lastIncome) }}</span>
+      </template>
+      <template #item-registered_at="{ createdDate }">
+        {{ toJalali(createdDate) }}
       </template>
       <!-- loading template -->
       <template #loadingSkeleton>
@@ -56,7 +65,8 @@
 <script setup lang="ts">
 import { useReferralColumns } from '@/composables/referral/useReferralColumns';
 import { UserReferred } from '@/graphql/graphql';
-
+const { numberFormat } = useMath();
+const { toJalali } = useDate();
 export interface Props {
   data: UserReferred[];
   loading: boolean;

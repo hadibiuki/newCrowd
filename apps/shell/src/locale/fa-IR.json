@@ -263,6 +263,7 @@
       "attachment": "دانلود فایل پیوست",
       "invoice": "پرداخت شناسه‌دار",
       "zarin_link": "لینک‌های پرداخت",
+      "referral_code": "کد معرف",
       "items": "آیتم‌ها"
     },
     "filters": {
@@ -539,7 +540,8 @@
     },
     "upload_error": "مشکلی در آپلود {_field_} به وجود آمده است، دوباره تلاش کنید",
     "province": "استان",
-    "city": "شهر"
+    "city": "شهر",
+    "balance_to_get":"موجودی قابل برداشت"
   },
   "_coupon": {
     "success_add": "کد تخفیف با موفقیت ایجاد شد",
@@ -1404,7 +1406,7 @@
     "full_name": "نام و نام‌خانوادگی",
     "ssn": "کد ملی",
     "level": "سطح",
-    "companionOfZarinPal": "هـمـراه زریـن‌پـال",
+    "companionOfZarinPal": "هـمـراه زریـن‌کراد",
     "info_description_silver_up": "جهت مشاهده اطلاعات حساب کاربری از این پس به {profile} خود مراجعه کنید.",
     "info_description_silver_down": "جهت تکمیل اطلاعات حساب کاربری و ارتقا سطح احراز هویت به صفحه {profile} خود مراجعه کنید.",
     "levelTitle": "سطح احراز هویت",
@@ -2456,6 +2458,7 @@
     "result": "{all} نتیجه"
   },
   "payout": {
+    "last_income":"آخرین درآمد",
     "id": "شناسه تسهیم",
     "date": "تاریخ ایجاد",
     "add": {
@@ -2544,6 +2547,16 @@
     }
   },
   "product": {
+    "providing_invest_for":"تامین سرمایه در گردش جهت",
+    "floating":"شناور",
+    "coming_soon":"به زودی",
+    "draft": "پیش‌نویس",
+    "active":"فعال",
+    "success_in_gethering":"موفق در جمع آوری",
+    "whitout_farabource":"بدون فرابورس",
+    "see_and_invest": "مشاهده و سرمایه گذاری",
+    "invesalble":" سرمایه پذیر",
+    "financial_institution": "نهاد مالی",
     "description": "مدیریت و فروش مستقیم محصول از طریق لینک پرداخت",
     "activate": "فعال کردن لینک پرداخت",
     "deActivate": "غیرفعال کردن لینک پرداخت",
@@ -3389,10 +3402,13 @@
       "ssn_signature": "کد ملی صاحب امضاء",
       "tax_id": "کد مالیاتی",
       "username": "نام کاربری",
-      "mobile": "شماره موبایل"
+      "mobile": "شماره موبایل",
+      "bource_code": "کد بورسی",
+      "nick_name": "نام نمایشی",
+      "show_nick_name_to_user":"نام نمایشی من را به سایر کاربران نشان بده"
     },
     "sections": {
-      "companionOfZarinPal": "هـمـراه زریـن‌پـال",
+      "companionOfZarinPal": "هـمـراه زریـن‌کراد",
       "user_account": "حساب کاربری",
       "bank_account": "حساب‌های بانکی",
       "partners": "شرکای تجاری",
@@ -3427,7 +3443,47 @@
     "transaction_amount": "مبلغ تراکنش",
     "transaction_id": "شناسه پرداخت",
     "transaction_invest_from_platform": "سرمایه گذاری از پلتفرم",
-    "transaction_title": "عنوان تراکنش"
+    "transaction_title": "عنوان تراکنش",
+    "asset":"دارایی",
+    "withdraw_some":"موجودی دارایی",
+    "withdrawal": "برداشت",
+    "performance_summary":"خلاصه عملکرد",
+    "last_chance_to_invest":"آخرین فرصت های سرمایه گذاری",
+    "chance_to_invest":"فرصت های سرمایه گذاری",
+    "no_invest_exist":"در حال حاضر طرح فعالی برای سرمایه‌گذاری وجود ندارد.",
+    "number_of_invest":"تعداد سرمایه گذاری",
+    "total_invest":"کل مبلغ سرمایه‌گذاری",
+    "total_profit":"کل سود",
+    "withdraw_asset":"برداشت از دارایی",
+    "total_assets":"کل موجودی دارایی",
+    "desired_amount": "مبلغ دلخواه",
+    "some_assets":"برداشت بخشی از موجودی",
+    "amount_assets":"مبلغ برداشت",
+    "choose_cart":"انتخاب کارت بانکی",
+    "withdrawal_cash": "برداشت وجه",
+    "success_withfrawal_request": "درخواست برداشت با موفقیت ثبت شد."
 
+  },
+  "signup":{
+    "phone_input":"شماره موبایل",
+    "ssn_input":"کد ملی",
+    "password": "رمز عبور",
+    "reapet_password": "تکرار رمز عبور",
+    "login_whit_otp":"ورود با رمز یکبارمصرف",
+    "login_whit_pass" : "ورود با رمز ثابت",
+    "not_access_to_number": "به شماره دسترسی ندارم",
+    "name":"نام ",
+    "family":" نام خانوادگی",
+    "continue": "ادامه",
+    "referral_code":"کد معرف(اختیاری)",
+    "howToFindZarinPal":"نحوه آشنایی با زرین کراد(اختیاری)",
+    "sejam_auth": "احراز هویت سجام",
+    "sejam_auth_description" : "کاربر گرامی قبل از سرمایه‌گذاری حتما احراز هویت سجام خود را در بخش حساب کاربری تکمیل کنید.",
+    "create_account": "ایجاد حساب",
+    "create_account_hint":"برای ادامه قوانین را اسکرول کرده بخوانید و سپس تیک قبول قوانین را بزنید.",
+    "accept_roles": "قوانین را خوانده و پذیرفته‌ام"
+  },
+  "otp":{
+    "edit_number":"ویرایش شماره"
   }
 }

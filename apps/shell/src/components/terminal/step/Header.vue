@@ -5,10 +5,10 @@
       :class="titleClass"
       class="font-YekanBakhFaNum font-extrabold text-display-700-d4 flex items-center justify-center text-center"
     >
-      {{ title }}
+      اطلاعات شرکت حقوقی را وارد کنید
     </h1>
     <p class="text-body-400-b2 font-medium text-text-soft rtl">
-      {{ caption }}
+      موارد زیر را برای ارتقاء حساب به حقوقی وارد کنید
     </p>
   </div>
 </template>

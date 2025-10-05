@@ -1,39 +1,20 @@
 <template>
-  <DashboardBaseMdGridLoading v-if="loading" />
-  <DashboardBaseEmptyGrid v-else-if="latestData && !latestData.length" />
-  <div v-else>
-    <ui-TableCard v-for="i in latestData" :key="i?.id" class="root">
+  <div>
+    <ui-TableCard v-for="i in data" :key="i?.id" class="root" @click="clicked(i)">
       <template #header>
         <div class="root__header">
           <!-- amount column -->
           <div class="root__header--id">
-            <span
-              :class="i?.amount === 0 ? '!text-text-danger' : ''"
-              class="root__header--id__text"
-              dir="ltr"
-            >
-              {{ i?.amount === 0 ? numberFormat(i?.fee * -1) : numberFormat(i?.amount) }}
-            </span>
+            <div :class="i.amount < 0 ? 'text-text-danger' : ''" class="flex items-center gap-sm">
+              <span dir="ltr">{{
+                i.amount < 0 ? '-' + numberFormat(i.amount * -1) : numberFormat(i.amount)
+              }}</span>
+            </div>
             <ui-Label :text="$t('_common.currency.rial')" type="neutral" />
           </div>
           <!-- status column -->
           <div class="root__header--status">
-            <!-- <ui-Status
-              v-if="i?.status"
-              :text="getStatusInfo(i.status).text"
-              :type="getStatusInfo(i.status).type"
-            /> -->
-            <ui-Status
-              v-if="SessionStatusEnum.Verified === i?.status"
-              icon="CheckMarkCircleFill"
-              type="informative"
-            />
-            <ui-Status v-if="i?.reconciliation_id" icon="DollarFill" type="positive" />
-            <ui-Status
-              v-if="i?.refund_id && i?.refund_status && isValidStatus(i?.status!)"
-              icon="RefundFill"
-              type="warning"
-            />
+            <ui-Status :text="getStatusInfo(i?.state).text" :type="getStatusInfo(i?.state).type" />
           </div>
         </div>
       </template>
@@ -44,7 +25,7 @@
             {{ columns[1].label }}
           </div>
           <div class="root__main--title__title">
-            {{ i?.id }}
+            {{ i?.trackingCode }}
           </div>
         </div>
         <ui-Divider />
@@ -54,39 +35,16 @@
             {{ columns[3].label }}
           </div>
           <div class="root__main--title__title">
-            {{ i?.created_at }}
+            {{ toJalali(i?.createdDate) }}
           </div>
         </div>
         <ui-Divider />
-        <!-- description colum -->
         <div class="root__main--title mt-sm">
           <div class="root__main--title__label">
             {{ columns[2].label }}
           </div>
           <div class="root__main--title__title">
-            <ui-Label
-              v-if="i?.amount === 0"
-              :text="$t('common.fee')"
-              type="neutral"
-              class="ml-xs"
-            />
-
             {{ i?.description }}
-          </div>
-        </div>
-      </template>
-      <template #footer>
-        <!-- action column -->
-        <div class="root__footer">
-          <div class="root__footer__detail">
-            <NuxtLink
-              class="flex items-center"
-              :to="`/panel/${terminalStore.currentDomain}/session/${i?.id}`"
-              no-prefetch
-            >
-              <span>{{ $t('_common.table.detail') }}</span>
-              <ui-Icon name="AngleLeft" />
-            </NuxtLink>
           </div>
         </div>
       </template>
@@ -95,31 +53,36 @@
 </template>
 
 <script setup lang="ts">
-import { SessionStatusEnum } from '@/graphql/graphql';
-import { useSessionQuery } from '~/composables/session/useSessionQuery';
+import { getAllTransacionsApi } from '~/restApi/transactions';
+const { toJalali } = useDate();
 
-const { numberFormat } = useMath();
+export interface Props {
+  loading: boolean;
+}
 const { columns } = useSessionColumns();
-const { data, load, loading } = useSessionQuery().sessionList;
-const terminalStore = useTerminalStore();
-const latestData = computed(() => {
-  if (data.value && data.value) {
-    return data.value.slice(0, 5);
-  }
+const { getStatusInfo } = useSessionStatus();
+const { numberFormat } = useMath();
+const store = useSessionStore();
+const data = ref([]);
+const loading = ref(false);
+async function refetchData() {
+  loading.value = true;
+  const body = {
+    pageNumber: 1,
+    pageSize: 5,
+  };
+  const customData = await getAllTransacionsApi(body);
 
-  return [];
-});
-// const { getStatusInfo } = useSessionStatus();
+  data.value = customData.data.items;
+  loading.value = false;
+}
+const clicked = (item: { id: string | number }) => {
+  store.detailesData = item;
+  store.showModal = true;
+};
 onMounted(() => {
-  load();
+  refetchData();
 });
-
-const isValidStatus = (status: string) =>
-  status === 'CONFLICTED' ||
-  status === 'FAILED' ||
-  status === 'INBANK' ||
-  status === 'PAID' ||
-  status === 'VERIFIED';
 </script>
 <style lang="scss" scoped>
 .root {

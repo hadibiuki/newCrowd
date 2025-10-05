@@ -1,11 +1,6 @@
 <template>
   <div class="flex items-center">
-    <ui-Avatar
-      v-if="logoUrl"
-      :src="`${logoUrl}?v=${version}`"
-      shape="square"
-      :size="avatarLogoSize"
-    />
+    <ui-Avatar v-if="logoUrl" :src="logoUrl" shape="square" :size="avatarLogoSize" />
     <ui-Icon
       v-else
       name="Terminal"
@@ -28,8 +23,6 @@ export interface Props {
   size?: 'medium' | 'large';
   rounded?: string;
 }
-const store = useTerminalStore();
-const version = computed(() => store.logoVersion);
 const props = withDefaults(defineProps<Props>(), {
   logo: undefined,
   active: false,
@@ -41,12 +34,8 @@ const logoUrl = computed(() => {
   if (!logo.value) {
     return undefined;
   }
-  let dimensions = '40x40';
-  if (size.value === 'large') {
-    dimensions = '64x64';
-  }
 
-  return `${logo.value}/${dimensions}.png`;
+  return logo.value;
 });
 const defaultLogoSize = computed(() => {
   switch (size.value) {

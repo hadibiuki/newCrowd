@@ -2,11 +2,11 @@
   <div>
     <ui-Pagination
       v-if="pagination"
-      :current-page="currentPage"
-      :rows="+pagination?.total"
-      :pages="+pagination?.last_page"
+      :current-page="pagination.page"
+      :rows="+pagination.total"
+      :pages="pagination.totalPages"
       :loading="loading"
-      :page-size="Number(route.query.pageSize) || config.public.pageSize"
+      :page-size="pagination.pageSize"
       @page-size-selected="setPageSize"
       @page-selected="setPage"
     />

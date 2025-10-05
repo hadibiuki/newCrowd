@@ -11,17 +11,30 @@
           :model-value="dateInput"
           :disabled="loading"
           :loading="false"
-          :steps="['month']"
-          only-month
+          :steps="['year', 'month']"
           name="calender"
+          max
           :placeholder="$t('_common.filters.date')"
           @selected-item="dateHandler"
         />
       </div>
     </template>
     <template #main>
-      <div class="grid grid-cols-2 border border-border-divider rounded-sm mt-xl">
-        <div class="col-span-2 lg:col-span-1 flex flex-col justify-center items-center p-md gap-sm">
+      <div class="grid grid-cols-3 border border-border-divider rounded-sm mt-xl">
+        <div class="col-span-3 lg:col-span-1 flex flex-col justify-center items-center p-md gap-sm">
+          <ui-Skeleton v-if="loading" :width="80" :height="20" />
+          <span v-else class="text-body-400-b3 text-text-soft">
+            {{ $t('_common.balance_to_get') }}
+          </span>
+          <ui-Skeleton v-if="loading" :height="30" class="mt-md" />
+          <span v-else class="flex gap-xs items-center">
+            <span class="text-display-700-d3">{{ referralStatistics?.selectedMonthIncome }}</span>
+            <ui-Label :text="$t('_common.currency.rial')" type="neutral" class="mx-xs h-fit" />
+          </span>
+        </div>
+        <div
+          class="col-span-3 lg:col-span-1 flex flex-col justify-center items-center p-md gap-sm md:border-r border-r-0 border-t md:border-t-0 border-border-divider"
+        >
           <ui-Skeleton v-if="loading" :width="80" :height="20" />
           <span v-else class="text-body-400-b3 text-text-soft">
             {{
@@ -32,12 +45,14 @@
           </span>
           <ui-Skeleton v-if="loading" :height="30" class="mt-md" />
           <span v-else class="flex gap-xs items-center">
-            <span class="text-display-700-d3">{{ setInitCalendarData?.monthIncome }}</span>
+            <span class="text-display-700-d3">{{
+              referralStatistics?.filteredDateProfitAmount
+            }}</span>
             <ui-Label :text="$t('_common.currency.rial')" type="neutral" class="mx-xs h-fit" />
           </span>
         </div>
         <div
-          class="col-span-2 lg:col-span-1 flex flex-col justify-center items-center p-md gap-sm md:border-r border-r-0 border-t md:border-t-0 border-border-divider"
+          class="col-span-3 lg:col-span-1 flex flex-col justify-center items-center p-md gap-sm md:border-r border-r-0 border-t md:border-t-0 border-border-divider"
         >
           <ui-Skeleton v-if="loading" :width="80" :height="20" />
           <span v-else class="text-body-400-b3 text-text-soft">
@@ -45,7 +60,7 @@
           </span>
           <ui-Skeleton v-if="loading" :height="30" class="mt-md" />
           <span v-else class="flex gap-xs items-center">
-            <span class="text-display-700-d3">{{ setInitCalendarData?.totalIncome }}</span>
+            <span class="text-display-700-d3">{{ referralStatistics?.wholeProfitAmount }}</span>
             <ui-Label :text="$t('_common.currency.rial')" type="neutral" class="mx-xs h-fit" />
           </span>
         </div>
@@ -54,49 +69,25 @@
       <div class="bottom-controller lg:items-center items-start">
         <ui-Skeleton v-if="loading" :height="20" />
         <span v-else class="text-text-soft text-body-400-b3 flex gap-2xs items-center">
-          <span> {{ $t('_common.buttons.last_payment') }} </span>
-          <ui-Tooltip :content="$t('_helper.referral.tooltip')">
-            <ui-Icon class="!text-body-400-b1" name="Warning" />
-          </ui-Tooltip>
+          <span> {{ $t('payout.last_income') }} </span>
         </span>
         <ui-Skeleton v-if="loading" :height="20" />
-        <span v-if="lastInvoice && !loading" class="flex gap-sm text-body-400-b2 items-center">
+        <span v-if="!loading" class="flex gap-sm text-body-400-b2 items-center">
           <span class="text-heading-600-h3">
-            {{ lastInvoice.amount }}
+            {{ referralStatistics.lastProfitAmount }}
             <span>{{ $t('common.rial') }}</span>
           </span>
-          <span class="point-divider bg-black-100 dark:bg-white"></span>
-          <span>
-            {{ lastInvoice.date }}
-          </span>
         </span>
-        <span v-else-if="!lastInvoice && !loading">-</span>
+        <span v-else-if="!lastInvoice">-</span>
         <ui-Skeleton v-if="loading" :height="20" />
-        <ui-Button
-          v-else
-          :text="$t('_referral.payment_history')"
-          variant="text"
-          before-icon="Reconciliation"
-          :loading="loading"
-          @click="showDialog"
-        />
       </div>
-      <ReferralBaseInvoiceGrid
-        v-model:show="showModal"
-        :data="invoiceTableData"
-        :loading="loading"
-        :last-index="data && data[data.length - 1]"
-        @change-year="changeYear"
-      />
     </template>
   </ui-Card>
 </template>
 <script lang="ts" setup>
-import moment from 'moment-jalaali';
-import { ReferrerInvoiceType } from '@/graphql/graphql';
-import { useReferrerInvoiceQuery } from '@/composables/referral/useReferralInvoiceQuery';
-import { useReferralQuery } from '@/composables/referral/useReferralQuery';
+import { getUserReferralStatisticsApi } from '~/restApi/referral';
 
+defineProps(['loading']);
 export interface Date {
   formatValue: string;
   month: string;
@@ -110,7 +101,7 @@ interface Calendar {
   totalIncome: number | string;
 }
 const dateInput = ref<string>();
-const store = useReferralStore();
+// const store = useReferralStore();
 const calendar = ref<Calendar>({
   date: '',
   month: '',
@@ -118,77 +109,14 @@ const calendar = ref<Calendar>({
   monthIncome: 0,
   totalIncome: 0,
 });
-const invoiceParam = ref({
-  fromDate: '',
-  toDate: '',
-});
-const dataParam = ref({
-  fromDate: '',
-  toDate: '',
-});
-const showModal = ref(false);
-const { fullDateJalali, toJalali } = useDate();
+const { toJalali } = useDate();
 const { numberFormat } = useMath();
-const showDialog = () => (showModal.value = true);
 const dateHandler = (date: Date) => {
   dateInput.value = date.formatValue;
   calendar.value.month = date.month;
   calendar.value.year = date.year;
-  invoiceParam.value.fromDate = moment(dateInput.value, 'jYYYY-jMM-jDD').format();
-  if (date.year) {
-    const year = +date.year + 1;
-    invoiceParam.value.fromDate = moment(`${date.year}-01-01`, 'jYYYY-jMM-jDD').format('YYYY-MM');
-    invoiceParam.value.toDate = moment(`${year}-01-15`, 'jYYYY-jMM-jDD').format('YYYY-MM');
-  }
+  getImcomeStaitstics(date.formatValue);
 };
-const invoiceTableData = computed(() => {
-  if (data.value && data.value.length) {
-    if (dataParam.value.fromDate) {
-      const filteredInvoice = data.value.filter(
-        (invoice: ReferrerInvoiceType) =>
-          moment(invoice.from_date).isSameOrAfter(dataParam.value.fromDate) &&
-          moment(invoice.to_date).isSameOrBefore(dataParam.value.toDate)
-      );
-
-      return filteredInvoice.map((item: ReferrerInvoiceType) => ({
-        from_date: (item.from_date && fullDateJalali(item.from_date)) ?? '-',
-        amount: (item.amount && numberFormat(item.amount)) ?? '-',
-        status: item.status,
-      }));
-    }
-
-    return data.value.map((item: ReferrerInvoiceType) => ({
-      from_date: (item.from_date && fullDateJalali(item.from_date)) ?? '-',
-      amount: (item.amount && numberFormat(item.amount)) ?? '-',
-      status: item.status,
-    }));
-  }
-
-  return [];
-});
-const getInitToDateParam = () => {
-  const date = moment();
-  const month = date.format('jM');
-  const year = date.format('jYYYY');
-  const fromDate = moment(`${year}-01-01`, 'jYYYY-jMM-jDD').format('YYYY-MM');
-  const toDate = moment(`${year}-${month}-01`, 'jYYYY-jMM-jDD').format('YYYY-MM');
-  invoiceParam.value.fromDate = fromDate;
-  invoiceParam.value.toDate = toDate;
-};
-const setInitCalendarData = computed(() => {
-  if (data.value) {
-    data.value.forEach(item => {
-      calendar.value.totalIncome += item.amount;
-      const date = moment(calendar.value.date, 'jYYYY-jMM-jDD');
-      if (date.isAfter(item.from_date) && date.isSameOrBefore(item.to_date)) {
-        calendar.value.monthIncome = item.amount;
-      }
-    });
-    calendar.value.totalIncome = numberFormat(calendar.value.totalIncome);
-  }
-
-  return calendar.value;
-});
 const lastInvoice = computed(() => {
   if (data.value && data.value.length) {
     return {
@@ -199,23 +127,19 @@ const lastInvoice = computed(() => {
 
   return undefined;
 });
-const { data, refetch } = useReferrerInvoiceQuery(
-  invoiceParam.value.fromDate,
-  invoiceParam.value.toDate
-);
-const { loading } = useReferralQuery();
-const changeYear = (val: string) => {
-  if (val !== 'Invalid date') {
-    const year = +val + 1;
-    dataParam.value.fromDate = moment(`${val}-03-01`, 'YYYY-MM-DD').format('YYYY-MM-DD');
-    dataParam.value.toDate = moment(`${year}-03-30`, 'YYYY-MM-DD').format('YYYY-MM-DD');
-  }
-};
+
 onMounted(() => {
-  getInitToDateParam();
-  refetch();
+  getImcomeStaitstics();
 });
-store.data = data;
+const data = ref([]);
+const referralStatistics = ref({});
+const getImcomeStaitstics = (filteredDate: string | null = null) => {
+  // eslint-disable-next-line promise/catch-or-return, promise/always-return
+  getUserReferralStatisticsApi(filteredDate).then(res => {
+    referralStatistics.value = res.data;
+    // data.value = res.data
+  });
+};
 </script>
 <style lang="scss" scoped>
 .point-divider {

@@ -20,13 +20,13 @@
               v-else
               :title="$t('_common.slug.invite_link')"
               class="w-full"
-              :content="`${config.public.next_panel_link}auth/register?ref_id=${userData?.referral_id}`"
+              :content="`${config.public.next_panel_link}auth/register?referral=${referral_id}`"
             />
           </div>
         </div>
       </template>
     </ui-Card>
-    <ReferralBaseContent />
+    <ReferralBaseContent :loading="loading" />
     <ui-Card dir="rtl">
       <template #main>
         <div class="referral__bottom">
@@ -40,7 +40,7 @@
                 {{ $t('_referral.active_users_of_this_month') }}
               </span>
               <span v-if="!loading" class="text-display-700-d3">
-                {{ data?.month_active_referrers ?? '-' }}
+                {{ userInvitees?.lastMonthInvitedPeople ?? '-' }}
               </span>
             </div>
             <div class="referral__bottom--content--item border-x border-border-divider">
@@ -50,7 +50,7 @@
                 {{ $t('_referral.new_users_this_month') }}
               </span>
               <span v-if="!loading" class="text-display-700-d3">
-                {{ data?.sum_referrers ?? '-' }}
+                {{ userInvitees?.lastMonthActiveInvitedPeople ?? '-' }}
               </span>
             </div>
             <div class="referral__bottom--content--item">
@@ -60,14 +60,14 @@
                 {{ $t('_referral.total_number_users_invited_far') }}
               </span>
               <span v-if="!loading" class="text-display-700-d3">
-                {{ data?.all_referrers ?? '-' }}
+                {{ userInvitees?.allInvitedPeople ?? '-' }}
               </span>
             </div>
           </div>
           <div>
-            <ReferralBaseLgGrid v-if="!md" :loading="loading" :data="tableData" />
-            <ReferralBaseMdGrid v-if="md" :loading="loading" :data="tableData" />
-            <div v-if="tableData?.length" class="mt-xl" dir="ltr">
+            <ReferralBaseLgGrid v-if="!md" :loading="loading" :data="data" />
+            <ReferralBaseMdGrid v-if="md" :loading="loading" :data="data" />
+            <div v-if="data?.length" class="mt-xl" dir="ltr">
               <ReferralBasePagination :pagination="pagination" :loading="loading" />
             </div>
           </div>
@@ -77,43 +77,63 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { useReferralQuery } from '@/composables/referral/useReferralQuery';
-import { useUserIdQuery } from '@/composables/user/useUserIdQuery';
-import { UserReferred } from '@/graphql/graphql';
-const { toJalali } = useDate();
-const { numberFormat } = useMath();
-const { data: userData } = useUserIdQuery();
+// import { UserReferred } from '@/graphql/graphql';
+import {
+  getUserInvitedUsersReportDetailPaginatedApi,
+  getUserInviteUsersReportReferralsApi,
+  getUserReferralCodeApi,
+} from '~/restApi/referral';
 const { md } = useSize();
-const { data, loading, pagination, refetch } = useReferralQuery();
 const route = useRoute();
 const config = useRuntimeConfig();
-const tableData = computed(() => {
-  if (data.value && data.value.user && data.value.user?.length) {
-    return data.value.user.map(item => ({
-      commission: (item?.commission && numberFormat(item.commission)) ?? '-',
-      last_session_time:
-        (item?.last_session_time &&
-          toJalali(item.last_session_time, 'jDD jMMMM jYYYY', 'jDD jMMMM jYYYY', '', '')) ??
-        '-',
-      registered_at: (item?.registered_at && toJalali(item.registered_at)) ?? '-',
-      avatar: item?.avatar,
-      id: item?.id,
-      name: item?.name,
-    })) as UserReferred[];
-  }
+const data = ref(null);
+const loading = ref(true);
+// eslint-disable-next-line camelcase
+const referral_id = ref(null);
+const pagination = ref({
+  page: route.query.page || 1,
+  total: 150,
+  pageSize: route.query.pageSize || 5,
+  totalPages: 1,
+});
+const userInvitees = ref(null);
+onMounted(async () => {
+  loading.value = true;
+  try {
+    const [referralRes, invitedUsersRes, userInviteesStat] = await Promise.all([
+      getUserReferralCodeApi(),
+      init(),
+      getUserInviteUsersReportReferralsApi(),
+    ]);
 
-  return [];
+    // eslint-disable-next-line camelcase
+    referral_id.value = referralRes.data.referralCode;
+    data.value = invitedUsersRes.data.items;
+    userInvitees.value = userInviteesStat.data;
+    pagination.value.total = invitedUsersRes.data.totalItems;
+    pagination.value.totalPages = invitedUsersRes.data.totalPages;
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.log({ err });
+  } finally {
+    loading.value = false;
+  }
 });
 
+const init = () =>
+  getUserInvitedUsersReportDetailPaginatedApi({
+    pageNumber: route.query.page || pagination.value.page,
+    pageSize: route.query.pageSize || pagination.value.pageSize,
+  });
 watch(
   () => route.query,
-  () => {
-    refetch({
-      limit: Number(route.query.pageSize) || config.public.pageSize,
-      offset:
-        (Number(route.query.pageSize) || config.public.pageSize) *
-        ((Number(route.query.page) || config.public.page) - 1),
-    });
+  async (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      const res = await init();
+      data.value = res.data.items;
+      pagination.value.total = res.data.totalItems;
+      pagination.value.totalPages = res.data.totalPages;
+    }
   }
 );
 </script>

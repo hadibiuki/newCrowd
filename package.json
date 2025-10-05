@@ -10,7 +10,6 @@
     "tsc": "nx run-many -t tsc",
     "dev": "nx run shell:dev",
     "codegen": "nx run shell:codegen",
-    "dev:kyc": "nx run kyc:dev",
     "story": "nx run docs:story",
     "build": "nx run-many -t build",
     "generate": "nx run locale:generate",

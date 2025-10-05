@@ -1,6 +1,6 @@
 <template>
   <div class="input">
-    <div dir="rtl" :class="styleValue" class="input__inner">
+    <div dir="rtl" :class="styleValue" class="input__inner border border-border">
       <!-- label -->
       <Transition name="label">
         <div v-if="showLabel" class="input__inner__label">
@@ -102,7 +102,7 @@ const styleValue = computed(() => {
     return 'input__inner--disabled';
   }
 
-  return 'input__inner--default';
+  return '';
 });
 const handleLabel = (ctx: boolean) => {
   if (ctx && placeholder.value && !loading.value && label.value) {
