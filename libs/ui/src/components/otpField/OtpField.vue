@@ -4,9 +4,9 @@
       <input
         v-for="index in codeLength"
         :key="index"
-        :disabled="loading"
         ref="inputRefs"
         v-model="otp[index - 1]"
+        :disabled="loading"
         class="otp__input"
         :class="{
           'otp__input__inner--error': isError,
@@ -84,7 +84,7 @@ const focusOrSubmit = async (val: Event, index: number) => {
   } else {
     otp.value[index - 1] = null;
   }
-  emit('update')
+  emit('update');
   submit();
 };
 const focusOnPrev = (e: KeyboardEvent, index: number) => {

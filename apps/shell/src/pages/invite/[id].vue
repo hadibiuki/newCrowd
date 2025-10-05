@@ -5,7 +5,8 @@
         <ui-Illustration name="InviteUser" class="mx-auto w-full mb-xl" />
         <p class="text-text text-heading-600-h2 mb-xl">دعوت به حساب حقوقی</p>
         <p class="text-text-soft text-body-400-b2 mb-xl">
-          <strong>{{ inviteData.companyName }}</strong> از شما دعوت کرد تا به عنوان اپراتور این حساب حقوقی نیز فعالیت کنید
+          <strong>{{ inviteData.companyName }}</strong> از شما دعوت کرد تا به عنوان اپراتور این حساب
+          حقوقی نیز فعالیت کنید
         </p>
       </div>
       <div class="flex items-center justify-center gap-xs w-full">
@@ -54,7 +55,6 @@ const acceptInviteHandler = (accept: boolean) => {
   loadingInvite.value = true;
   // eslint-disable-next-line promise/catch-or-return
   AcceptInvitationsOperatorsApi(route.params.id, accept)
-    // eslint-disable-next-line promise/always-return
     .then(res => {
       // eslint-disable-next-line promise/always-return
       if (res.meta.isSuccess) {

@@ -10,7 +10,7 @@ export async function getUserReferralCodeApi() {
   return await axios.get(USER_PATH + `Referrals/Code`);
 }
 
-export async function getUserReferralStatisticsApi(filterDate: string | null = null) {
+export async function getUserReferralStatisticsApi(filterDate: null | string = null) {
   return await axios.get(
     USER_PATH + `Referrals/Statistics${filterDate ? `?filterDate=${filterDate}` : ''}`
   );

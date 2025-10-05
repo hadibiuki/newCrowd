@@ -39,4 +39,3 @@ export async function completeUserRegistrationApi(body: object, hasSejam: boolea
 
   return await axios.post(USER_PATH + 'Accounts/CompleteNoSejamUserRegistration', body);
 }
-

@@ -4,8 +4,8 @@
       <template #main>
         <ui-skeleton :loading="projectLoading" :height="350" :width="0">
           <div
-            class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 rounded-sm mt-xl gap-xs"
             v-if="projects.length"
+            class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 rounded-sm mt-xl gap-xs"
           >
             <SharedProductCard v-for="project in projects" :key="project.id" :project="project" />
           </div>
@@ -33,7 +33,7 @@ export interface RowType {
 const projects = ref([]);
 const projectLoading = ref(true);
 onMounted(() => {
-  // eslint-disable-next-line promise/catch-or-return, promise/always-return
+  // eslint-disable-next-line promise/catch-or-return
   getAllProjects({ pageSize: 12, pageNumber: 1, internalStatus: 2 })
     // eslint-disable-next-line promise/always-return
     .then(res => {

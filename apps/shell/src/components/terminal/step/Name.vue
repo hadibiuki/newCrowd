@@ -7,13 +7,13 @@
       class="w-full mb-sm"
       name="name"
       :helper="handler"
+      max-length="11"
       @input="
         handler = {
           type: 'info',
           message: '',
         }
       "
-      max-length="11"
     />
     <div class="font-yekanFa text-text-soft text-body-400-b3 mb-3xl ml-xs rtl">
       شناسه ملی حقوقی یک کد یکتای ۱۱ رقمی است که پس از ثبت قانونی شرکت، برای هر شرکت یا سازمان صادر

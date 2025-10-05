@@ -3,22 +3,6 @@ import { UserType } from '@/graphql/graphql';
 import { UserAnnouncementTypeCustom } from '@/types/userCustomTypes';
 import { defineStore } from 'pinia';
 const { getCookie, setCookie } = useCookies();
-interface IUser {
-  // address_count: number;
-  avatar: string;
-  // data_status?: DataStatusType;
-  email: string;
-  first_name: string;
-  id: string;
-  last_name: string;
-  level: string;
-  personal_link: {
-    domain: string;
-  };
-  profile_version: string;
-  referral_id: string;
-  username: string;
-}
 interface INotification {
   body: string;
   id: string;

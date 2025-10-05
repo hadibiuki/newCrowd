@@ -16,7 +16,7 @@
                 />
               </div>
               <div
-                class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-x-md relative  max-h-[108px]"
+                class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-x-md relative max-h-[108px]"
               >
                 <div class="h-fit max-h-[108px]">
                   <NuxtImg
@@ -55,15 +55,19 @@
                   <div class="referral__bottom--content--item border-x border-border-divider">
                     <ui-Skeleton v-if="loading" />
                     <ui-Skeleton v-if="loading" :width="240" :height="24" class="mt-md" />
-                    <span v-if="!loading" class="text-body-400-b3 text-text-soft ml-auto"> وضعیت </span>
+                    <span v-if="!loading" class="text-body-400-b3 text-text-soft ml-auto">
+                      وضعیت
+                    </span>
                     <span v-if="!loading" class="text-body-400-b2">
                       {{ item?.status ?? '-' }}
                     </span>
                   </div>
-                  <div class="referral__bottom--content--item border-x border-border-divider ">
+                  <div class="referral__bottom--content--item border-x border-border-divider">
                     <ui-Skeleton v-if="loading" />
                     <ui-Skeleton v-if="loading" :width="240" :height="24" class="mt-md" />
-                    <span v-if="!loading" class="text-body-400-b3 text-text-soft ml-auto"> گواهی مشارکت </span>
+                    <span v-if="!loading" class="text-body-400-b3 text-text-soft ml-auto">
+                      گواهی مشارکت
+                    </span>
                     <a
                       :href="item.participantReportFilePath"
                       target="_blank"
@@ -111,7 +115,7 @@ onMounted(() => {
     pageNumber: route.query.page || pagination.value.page,
     pageSize: route.query.pageSize || pagination.value.pageSize,
   };
-  // eslint-disable-next-line promise/catch-or-return, promise/always-return
+  // eslint-disable-next-line promise/catch-or-return
   getAllInvestmentsApi(body)
     // eslint-disable-next-line promise/always-return
     .then(res => {
@@ -152,4 +156,3 @@ onMounted(() => {
   }
 }
 </style>
-

@@ -33,7 +33,6 @@ const props = withDefaults(defineProps<Props>(), {
   }),
 });
 const { remaining, isLoadingVerify, loading } = toRefs(props);
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emit = defineEmits(['verified', 'edit', 'resendOtp', 'changeotp', 'submit']);
 // const t = useI18n();
 // const { $notify } = useNuxtApp();

@@ -27,10 +27,12 @@ const invities = ref(null);
 const showInviteModal = ref(true);
 const { $notify } = useNuxtApp();
 onMounted(() => {
-  // eslint-disable-next-line promise/catch-or-return, promise/always-return
+  // eslint-disable-next-line promise/catch-or-return
   getAllInvitationApi().then(res => {
-    console.log({res})
-    if (res.data?.at(0)) invities.value = res.data[0];
+    // eslint-disable-next-line promise/always-return
+    if (res.data?.at(0)) {
+      invities.value = res.data[0];
+    }
   });
 });
 
@@ -38,7 +40,6 @@ const acceptInviteHandler = (accept: boolean) => {
   loadingInvite.value = true;
   // eslint-disable-next-line promise/catch-or-return
   AcceptInvitationsOperatorsApi(invities.value?.inviteationToken, accept)
-    // eslint-disable-next-line promise/always-return
     .then(res => {
       // eslint-disable-next-line promise/always-return
       if (res.meta.isSuccess) {

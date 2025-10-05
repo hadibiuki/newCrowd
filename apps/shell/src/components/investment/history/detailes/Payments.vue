@@ -39,7 +39,6 @@
 // eslint-disable-next-line vue/require-prop-types
 defineProps(['data', 'loading']);
 const { numberFormat } = useMath();
-const { toJalali } = useDate();
 </script>
 
 <style lang="scss" scoped>

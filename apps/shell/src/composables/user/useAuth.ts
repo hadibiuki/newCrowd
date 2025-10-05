@@ -41,35 +41,12 @@ export const useAuth = () => {
     );
   });
   const canUserCreateTerminal = computed(() => {
-    const { terminals } = useActiveTerminal();
     const user = useAuthStore();
     if (user.userAuth.level !== UserLevelEnum.New) {
       return true;
     }
-    if (
-      terminals.length > 0 &&
-      terminals.filter(t => t.owner_id === user.userAuth.id)?.length > 0
-    ) {
-      return true;
-    }
 
     return false;
-  });
-  const needsOnboarding = computed(() => {
-    const { terminals } = useActiveTerminal();
-    const user = useAuthStore();
-    if (terminals.length > 0) {
-      return false;
-    }
-    if (
-      user.userAuth.level === UserLevelEnum.Blue ||
-      user.userAuth.level === UserLevelEnum.Silver ||
-      user.userAuth.level === UserLevelEnum.Gold
-    ) {
-      return false;
-    }
-
-    return true;
   });
   const addTerminalUrl = () => {
     if (canUserCreateTerminal.value) {
@@ -85,6 +62,5 @@ export const useAuth = () => {
     handleAuthRedirect,
     isBlueLevel,
     isSilverLevelDown,
-    needsOnboarding,
   };
 };

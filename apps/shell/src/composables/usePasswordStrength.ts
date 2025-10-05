@@ -25,40 +25,38 @@ export function usePasswordStrength() {
 
   function checkPasswordStrength(password: string): void {
     // بررسی شرایط
-    checks.value.length.validate = password.length >= 8
-    checks.value.uppercase.validate = /[A-Z]/.test(password)
-    checks.value.lowercase.validate = /[a-z]/.test(password)
-    checks.value.number.validate = /\d/.test(password)
-    checks.value.specialChar.validate = /[@$!%*?&#]/.test(password)
+    checks.value.length.validate = password.length >= 8;
+    checks.value.uppercase.validate = /[A-Z]/.test(password);
+    checks.value.lowercase.validate = /[a-z]/.test(password);
+    checks.value.number.validate = /\d/.test(password);
+    checks.value.specialChar.validate = /[@$!%*?&#]/.test(password);
 
     // تعیین قدرت رمز عبور
-    const strengthScore = Object.values(checks.value).filter(
-      (item) => item.validate
-    ).length
+    const strengthScore = Object.values(checks.value).filter(item => item.validate).length;
     switch (strengthScore) {
       case 1:
-        passwordStrength.value = ' خیلی ضعیف'
-        break
+        passwordStrength.value = ' خیلی ضعیف';
+        break;
       case 2:
-        passwordStrength.value = 'ضعیف'
-        break
+        passwordStrength.value = 'ضعیف';
+        break;
       case 3:
-        passwordStrength.value = 'متوسط'
-        break
+        passwordStrength.value = 'متوسط';
+        break;
       case 4:
-        passwordStrength.value = 'قوی'
-        break
+        passwordStrength.value = 'قوی';
+        break;
       case 5:
-        passwordStrength.value = 'خیلی قوی'
-        break
+        passwordStrength.value = 'خیلی قوی';
+        break;
       default:
-        passwordStrength.value = 'خیلی ضعیف'
+        passwordStrength.value = 'خیلی ضعیف';
     }
   }
 
   return {
-    passwordStrength,
-    checks,
     checkPasswordStrength,
-  }
+    checks,
+    passwordStrength,
+  };
 }

@@ -4,16 +4,6 @@
   </NuxtLink>
 
   <ui-Button
-    v-if="store.terminalSelectionState === Status.VISIBLE"
-    id="terminal_product_tour_sm"
-    dir="rtl"
-    after-icon="AngleDown"
-    :text="activeTerminal?.name"
-    type="tertiary"
-    class="terminal-button max-w-[calc(100%-40px)] truncate"
-    @click.stop="toggleTerminalListHandler()"
-  />
-  <ui-Button
     id="product_tour_menu"
     type="tertiary"
     icon="MenuBurger"
@@ -32,12 +22,8 @@
 </template>
 
 <script setup lang="ts">
-const { activeTerminal } = useTerminalQuery();
 const toggleModal = ref(false);
 const store = useNavigateStore();
-const toggleTerminalListHandler = () => {
-  toggleModal.value = !toggleModal.value;
-};
 const closeOverview = () => {
   toggleModal.value = false;
 };

@@ -10,8 +10,6 @@
 
     <div ref="menuRef">
       <SettingsBaseSideMenu
-        :flag="flag"
-        :status="status"
         :loading="loading"
         :is-owner="isOwner"
         :has-zarin-gates="hasZarinGates"
@@ -23,12 +21,6 @@
 
 <script setup lang="ts">
 import { TopBarElementType } from '@zarinpal/ui/src/components/topbar/Topbar.vue';
-import {
-  TerminalFlagEnum,
-  TerminalStatusEnum,
-  ZarinGateType,
-  PaymentTerminalStatusEnum,
-} from '@/graphql/graphql';
 
 enum TerminalSettingsMenus {
   TerminalSettings = 'TerminalSettings',
@@ -48,13 +40,8 @@ const route = useRoute();
 const router = useRouter();
 const t = useI18n();
 const { data: userData, loading: userLoading } = useUserIdQuery();
-const { activeTerminal, loading: terminalLoading } = useTerminalQuery();
-const flag = computed(() => activeTerminal.value?.flag);
-const status = computed(() => activeTerminal.value?.status);
 const menuRef = ref();
 const topBarRef = inject<Ref<TopBarElementType>>('topBarRef');
-const { isCandidateDirectReconcile, isActiveDirectReconcile, hadActiveDirectReconcile } =
-  useDirectReconcile();
 const redirectToTerminalSettings = () => {
   $notify({
     isRead: false,
@@ -81,78 +68,20 @@ const scrollToItem = () => {
     behavior: 'smooth',
   });
 };
-const permissionHandler = () => {
-  if (
-    flag.value === TerminalFlagEnum.PersonalLink &&
-    [
-      TerminalSettingsMenus.Contact,
-      TerminalSettingsMenus.TechnicalSetting,
-      TerminalSettingsMenus.Service,
-    ].includes(route.query.menu as TerminalSettingsMenus)
-  ) {
-    redirectToTerminalSettings();
-  }
-};
-const checkTerminalStatus = () => {
-  if (route.query.menu && status.value === TerminalStatusEnum.Pending) {
-    redirectToTerminalSettings();
-  }
-};
-const isOwner = computed(
-  () =>
-    activeTerminal.value?.owner_id &&
-    userData.value?.id &&
-    userData.value?.id === activeTerminal.value?.owner_id
-);
-const hasZarinGates = computed(() => {
-  const list = _filter(
-    activeTerminal.value?.zarin_gate,
-    (item: ZarinGateType) =>
-      item.status === PaymentTerminalStatusEnum.Active ||
-      item.status === PaymentTerminalStatusEnum.DeActive
-  );
-  const zarinGates = _reject(list, ['psp', 'WPep']);
-
-  return zarinGates.length > 0 && activeTerminal.value?.status === TerminalStatusEnum.Active;
-});
-const loading = computed(() => userLoading.value || terminalLoading.value);
+const isOwner = computed(() => userData.value?.id);
+const loading = computed(() => userLoading.value);
 onMounted(() => {
   smoothScrollToContainer();
 });
 
 watch(
-  [() => route.query, isActiveDirectReconcile],
+  [() => route.query],
   () => {
-    permissionHandler();
-    checkTerminalStatus();
     if (
       !isOwner.value &&
       [TerminalSettingsMenus.Permission, TerminalSettingsMenus.UserAyan].includes(
         route.query.menu as TerminalSettingsMenus
       )
-    ) {
-      redirectToTerminalSettings();
-    }
-    if (
-      !hasZarinGates.value &&
-      [TerminalSettingsMenus.Service].includes(route.query.menu as TerminalSettingsMenus)
-    ) {
-      redirectToTerminalSettings();
-    }
-    if (
-      isActiveDirectReconcile.value &&
-      [TerminalSettingsMenus.Fee].includes(route.query.menu as TerminalSettingsMenus)
-    ) {
-      redirectToTerminalSettings();
-    }
-    if (
-      [TerminalSettingsMenus.DirectReconcile].includes(route.query.menu as TerminalSettingsMenus) &&
-      ((!isActiveDirectReconcile.value &&
-        !isCandidateDirectReconcile.value &&
-        !hadActiveDirectReconcile.value) ||
-        (!isActiveDirectReconcile.value &&
-          isCandidateDirectReconcile.value &&
-          hadActiveDirectReconcile.value))
     ) {
       redirectToTerminalSettings();
     }

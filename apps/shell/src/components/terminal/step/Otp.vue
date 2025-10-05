@@ -11,7 +11,8 @@
     <template #body>
       <ui-Illustration name="Otp" class="flex justify-cetner mx-auto mb-md" />
       <p class="text-body-400-b2 text-text-soft break-words flex justify-center">
-        لطفا رمز پیامک شده به <strong class="mx-2xs text-text">شماره نماینده سجامی</strong> را وارد کنید.
+        لطفا رمز پیامک شده به <strong class="mx-2xs text-text">شماره نماینده سجامی</strong> را وارد
+        کنید.
       </p>
       <SharedExportVerifyOtp
         :loading="loading"

@@ -83,8 +83,6 @@ import {
   getUserInviteUsersReportReferralsApi,
   getUserReferralCodeApi,
 } from '~/restApi/referral';
-const { toJalali } = useDate();
-const { numberFormat } = useMath();
 const { md } = useSize();
 const route = useRoute();
 const config = useRuntimeConfig();
@@ -102,7 +100,11 @@ const userInvitees = ref(null);
 onMounted(async () => {
   loading.value = true;
   try {
-    const [referralRes, invitedUsersRes, userInviteesStat] = await Promise.all([getUserReferralCodeApi(), init() ,getUserInviteUsersReportReferralsApi( )]);
+    const [referralRes, invitedUsersRes, userInviteesStat] = await Promise.all([
+      getUserReferralCodeApi(),
+      init(),
+      getUserInviteUsersReportReferralsApi(),
+    ]);
 
     // eslint-disable-next-line camelcase
     referral_id.value = referralRes.data.referralCode;

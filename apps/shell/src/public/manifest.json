@@ -5,7 +5,7 @@
   "lang": "fa-IR",
   "dir": "rtl",
   "id": "/source=pwa",
-  "start_url": "/beta/",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

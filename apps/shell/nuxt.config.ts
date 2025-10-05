@@ -28,7 +28,7 @@ export default defineNuxtConfig({
     },
   },
   app: {
-    baseURL: '/beta/',
+    baseURL: '/',
     head: {
       bodyAttrs: {
         class: 'bg-background font-IRANYekanXVF overflow-x-hidden',

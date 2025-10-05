@@ -102,7 +102,7 @@ const handleChangeTerminal = (data: object) => {
   // router.push('/');
 };
 const isRealAccount = computed(() => {
-  console.log({userAuth:userAuth.value.accounts})
+  console.log({ userAuth: userAuth.value.accounts });
   if (!userAuth.value || !userAuth.value.accounts) {
     return false;
   }
@@ -110,7 +110,7 @@ const isRealAccount = computed(() => {
   if (realAccound.type !== 2) {
     return false;
   }
-  const idOwner = userAuth.value.accounts.filter(el=> el.isMainOwner)
+  const idOwner = userAuth.value.accounts.filter(el => el.isMainOwner);
   if (idOwner.length) {
     return false;
   }

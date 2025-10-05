@@ -1,8 +1,6 @@
 export const useRedirectToHome = () => {
-  const { active } = useActiveTerminal();
-  const homeUrl = computed(() =>
-    active?.domain ? `/panel/${encodeURIComponent(active.domain)}/dashboard` : '/panel/overview'
-  );
+  // eslint-disable-next-line no-constant-condition
+  const homeUrl = computed(() => (true ? `/panel/dashboard` : '/panel/overview'));
 
   return { homeUrl };
 };

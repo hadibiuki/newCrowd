@@ -13,7 +13,7 @@
           v-for="(item, index) in timeLines"
           :key="index"
           :title="item.title"
-          :caption="toJalali(item.date, 'jDD jMMMM jYYYY','jDD jMMMM jYYYY')"
+          :caption="toJalali(item.date, 'jDD jMMMM jYYYY', 'jDD jMMMM jYYYY')"
           :icon="item.icon"
           :icon-class="item.class"
         >

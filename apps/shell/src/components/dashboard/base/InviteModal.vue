@@ -12,7 +12,8 @@
       <div class="flex-row items-center">
         <ui-Illustration name="InviteUser" class="mx-auto w-full mb-xl" />
         <p class="text-text-soft text-body-400-b2 text-text-soft mb-xl">
-          <strong>{{ data.companyName }}</strong> از شما دعوت کرد تا به عنوان اپراتور این حساب حقوقی نیز فعالیت کنید
+          <strong>{{ data.companyName }}</strong> از شما دعوت کرد تا به عنوان اپراتور این حساب حقوقی
+          نیز فعالیت کنید
         </p>
       </div>
     </template>

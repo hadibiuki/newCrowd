@@ -17,12 +17,7 @@
       :outside-click="false"
       @close="handleCloseDirectReconcileModal"
     />
-    <SharedShareModalWelcome v-else-if="currentModal === ModalType.Welcome" @close="handleClose" />
-    <SharedShareModalChangeLog
-      v-else-if="currentModal === ModalType.ChangeLog"
-      :data="data"
-      @close="handleCloseLog"
-    />
+
     <LazySharedLayoutLogOut />
     <div class="terminal-layout flex-row-reverse">
       <LazySharedNavbarMainMenu v-if="!isFromApp" />
@@ -44,31 +39,11 @@ enum ModalType {
   Welcome,
   ChangeLog,
 }
-const { data, onResult } = useReleaseNoteQuery();
 const { isFromApp } = useFromAppRoute();
-onResult(() => {
-  if (data.value?.version) {
-    if (authStore.version !== data.value.version) {
-      showChangeLog.value = true;
-    }
-  }
-});
-const handleCloseLog = () => {
-  if (data.value) {
-    authStore.version = data.value.version as string;
-  }
-  showChangeLog.value = false;
-};
 useHead({
   titleTemplate: title =>
     title ? ` ${t('_common.app_name')} | ${title}` : `${t('_common.app_name')}`,
 });
-const store = useTerminalStore();
-store.logoVersion = new Date().getTime();
-const handleClose = () => {
-  authStore.isFirstTime = false;
-  hasSeenWelcome.value = true;
-};
 const handleCloseDirectReconcileModal = () => {
   authStore.setDirectReconcileModal(false);
   closedDirectReconcile.value = true;

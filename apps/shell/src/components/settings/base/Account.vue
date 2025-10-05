@@ -27,7 +27,7 @@ const init = async () => {
   const res = await getBankAccountsApi({}, true);
   data.value = res?.data?.items || [];
   useBankAccountListStore.fill(data.value);
-  const selected = data.value.filter(item =>item.isDefaultWithdraw)[0]
+  const selected = data.value.filter(item => item.isDefaultWithdraw)[0];
   selectedBankAccount.value = selected;
 };
 const disableSubmit = ref<boolean>(true);

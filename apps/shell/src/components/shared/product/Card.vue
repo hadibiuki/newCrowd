@@ -69,7 +69,9 @@
           >
             سبدگردانی آیکو
           </span>
-          <span v-else class="font-semibold flex w-max text-[10px] text-text text-nowrap">کارگزاری دانایان</span>
+          <span v-else class="font-semibold flex w-max text-[10px] text-text text-nowrap"
+            >کارگزاری دانایان</span
+          >
         </div>
       </ui-Tooltip>
 
@@ -79,7 +81,9 @@
       >
         <ui-Icon name="Link" class="float-left !text-[20px]" />
 
-        <span class="font-semibold text-[10px] mr-2xs z-10">{{ project.projectPersianSymbol }}</span>
+        <span class="font-semibold text-[10px] mr-2xs z-10">{{
+          project.projectPersianSymbol
+        }}</span>
         <div
           class="flex bg-surface-soft font-semibold text-[10px] p-1 rounded-sm top-2 right-0 absolute hidden group-hover:flex"
         >
@@ -125,8 +129,8 @@
                 (project.faraBourseCrowdFundingTypeId != 2
                   ? project.successPercent
                   : project.successPercent > floatingPercent
-                    ? '100'
-                    : (project.successPercent / floatingPercent) * 100) + '%',
+                  ? '100'
+                  : (project.successPercent / floatingPercent) * 100) + '%',
             }"
           ></div>
           <div
@@ -134,8 +138,8 @@
           ></div>
         </div>
         <div
-          class="text-sm ml-2xs mr-[3px] border-r border-primary relative group"
           v-if="project.faraBourseCrowdFundingTypeId == 2"
+          class="text-sm ml-2xs mr-[3px] border-r border-primary relative group"
         >
           <svg
             width="16"
@@ -171,10 +175,13 @@
         </div>
 
         <div
-          class="bg-border-divider rounded-full h-[6px] flex-grow relative"
           v-if="project.faraBourseCrowdFundingTypeId == 2"
+          class="bg-border-divider rounded-full h-[6px] flex-grow relative"
         >
-          <div class="bg-primary h-[6px] rounded-full z-10 relative" :style="getWhitCalculate"></div>
+          <div
+            class="bg-primary h-[6px] rounded-full z-10 relative"
+            :style="getWhitCalculate"
+          ></div>
           <div
             class="absolute w-full h-[1px] border-t border-t-[1px] border-white-100 border-dashed top-1/2 -translate-y-1/2 z-5 w-[94%] right-1"
           ></div>
@@ -222,7 +229,6 @@ const props = defineProps<{
 }>();
 const { project } = toRefs(props);
 
-// eslint-disable-next-line vue/no-setup-props-destructure
 console.log({ props: project.value });
 const floatingPercent = computed(
   () => (project.value.minimumRequiredPrice / project.value.totalPrice) * 100
@@ -246,13 +252,12 @@ const handleLinkClicked = () => {
 //             url = null; // or handle the error as needed
 //         }
 //         if (!url) {
-//         return 
-//         } 
+//         return
+//         }
 //         const mime = url.pathname.split('.').at(-1)
-//         if(mime === 'mp4' ) return true  // || mime === "webm" || mime === "webp" 
+//         if(mime === 'mp4' ) return true  // || mime === "webm" || mime === "webp"
 //     return false
 //     })
-
 
 //     const copyToClipboard = () => {
 //     navigator.clipboard.writeText(props.project.projectPersianSymbol);
@@ -265,9 +270,9 @@ const handleLinkClicked = () => {
 //     }
 //     }
 
-    // const handleClickOnCart = ()=>{
-    // window.open('/projects/'+ props.project.id, '_blank', 'noopener,noreferrer');
-    // }
+// const handleClickOnCart = ()=>{
+// window.open('/projects/'+ props.project.id, '_blank', 'noopener,noreferrer');
+// }
 
 //     const errorMessage = ref('');
 
@@ -313,7 +318,7 @@ const getWhitCalculate = computed(() => {
     return { width: '0%' };
   }
   const barPercent = 100 - percent;
-  const calcPercent = (project.value.successPercent - percent) / (barPercent ) * 100
+  const calcPercent = ((project.value.successPercent - percent) / barPercent) * 100;
   if (calcPercent > 100) {
     return { width: '100%' };
   }

@@ -35,13 +35,6 @@
 </template>
 
 <script setup lang="ts">
-import {
-  TerminalFlagEnum,
-  Maybe,
-  TerminalStatusEnum,
-  TerminalPermissionEnum,
-} from '@/graphql/graphql';
-
 const authStore = useAuthStore();
 
 enum Menu {
@@ -64,11 +57,10 @@ enum SectionTypes {
   Ayan,
 }
 interface Props {
-  flag: Maybe<TerminalFlagEnum>;
   loading?: boolean;
   isOwner: boolean;
   hasZarinGates: boolean;
-  status: TerminalStatusEnum;
+  status: string;
 }
 interface SubMenu {
   title: string;
@@ -84,12 +76,8 @@ interface MenuItem {
 }
 const props = withDefaults(defineProps<Props>(), {});
 const emits = defineEmits(['action']);
-const { flag, loading, isOwner, hasZarinGates, status } = toRefs(props);
-const { isCandidateDirectReconcile, isActiveDirectReconcile, hadActiveDirectReconcile } =
-  useDirectReconcile();
-const t = useI18n();
+const { loading, isOwner, hasZarinGates } = toRefs(props);
 const route = useRoute();
-const { hasPermission } = usePermissionValidate(TerminalPermissionEnum.CardHolderInquiry);
 const menu: MenuItem[] = [
   {
     section: SectionTypes.Info,
@@ -109,7 +97,7 @@ const menu: MenuItem[] = [
         title: 'حساب‌های بانکی حقوقی',
         icon: 'CreditCardUser-1',
         value: Menu.Account,
-        disabled: status.value === TerminalStatusEnum.Pending,
+        disabled: false,
       },
     ],
   },
@@ -120,16 +108,13 @@ const menu: MenuItem[] = [
         title: 'اپراتورها',
         icon: 'Phone',
         value: Menu.Contact,
-        disabled: status.value === TerminalStatusEnum.Pending,
+        disabled: false,
       },
     ],
   },
 ];
 const menus = computed<MenuItem[]>(() => {
   let filteredMenu = [...menu];
-  if (flag.value === TerminalFlagEnum.PersonalLink) {
-    filteredMenu = filteredMenu.filter(item => item.section !== SectionTypes.Support);
-  }
   if (!isOwner.value) {
     filteredMenu = filteredMenu.filter(
       item => item.section !== SectionTypes.Permission && item.section !== SectionTypes.Ayan
@@ -142,45 +127,6 @@ const menus = computed<MenuItem[]>(() => {
           ...item,
           subMenu: item.subMenu.filter(subItem => subItem.value !== Menu.Service),
         };
-      }
-
-      return item;
-    });
-  }
-  if (
-    (!isActiveDirectReconcile.value &&
-      !isCandidateDirectReconcile.value &&
-      !hadActiveDirectReconcile.value) ||
-    (!isActiveDirectReconcile.value &&
-      isCandidateDirectReconcile.value &&
-      hadActiveDirectReconcile.value)
-  ) {
-    filteredMenu = filteredMenu.map(item => {
-      if (item.section === SectionTypes.Ayan) {
-        item.subMenu = item.subMenu.filter(subItem => subItem.value !== Menu.DirectReconcile);
-      }
-
-      return item;
-    });
-  }
-  if (isActiveDirectReconcile.value) {
-    filteredMenu = filteredMenu.map(item => {
-      if (item.section === SectionTypes.Ayan) {
-        item.subMenu = item.subMenu.filter(
-          subItem => subItem.value !== Menu.Ayan && subItem.value !== Menu.Zarin_Link
-        );
-      }
-      if (item.section === SectionTypes.Account) {
-        item.subMenu = item.subMenu.filter(subItem => subItem.value !== Menu.Fee);
-      }
-
-      return item;
-    });
-  }
-  if (!hasPermission.value) {
-    filteredMenu = filteredMenu.map(item => {
-      if (item.section === SectionTypes.Ayan) {
-        item.subMenu = item.subMenu.filter(subItem => subItem.value !== Menu.Ayan);
       }
 
       return item;

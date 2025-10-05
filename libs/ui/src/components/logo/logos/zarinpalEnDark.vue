@@ -88,7 +88,7 @@
         gradientUnits="userSpaceOnUse"
       >
         <stop stop-color="#FFD60A" />
-        <stop offset="1" stop-color="#F5BE09"/>
+        <stop offset="1" stop-color="#F5BE09" />
       </linearGradient>
       <linearGradient
         id="paint1_linear_1961_697"

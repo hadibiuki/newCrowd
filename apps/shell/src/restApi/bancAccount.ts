@@ -8,11 +8,11 @@ export async function getBankAccountsApi(
 ) {
   const query = toQueryString(filter);
 
-  return await axios.get(USER_PATH + `BankAccounts${query}`, { legual:legual });
+  return await axios.get(USER_PATH + `BankAccounts${query}`, { legual: legual });
 }
 
 export async function addBankAccountApi(body: object, legual = false) {
-  return await axios.post(USER_PATH + 'BankAccounts', body, { legual:legual });
+  return await axios.post(USER_PATH + 'BankAccounts', body, { legual: legual });
 }
 
 // export async function deleteBankAccount(id) {

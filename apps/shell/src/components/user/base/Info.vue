@@ -8,6 +8,25 @@
       <ui-Avatar :src="userAuth.avatarFile?.url" shape="rounded" size="lg" />
       <ui-ZpBadge :id="userAuth?.id" />
     </div>
+
+    <!-- <div class="flex justify-end gap-md">
+    <ui-FloatButton
+      class="upload-logo"
+      :icon="userAuth?.avatarFile?.url ? 'PenEdit' : 'Plus'"
+      :loading="loading || loadingEdit"
+      @click="chooseFiles()"
+    >
+      <template #default>
+        <div class="w-4xl h-4xl flex items-center justify-center">
+          <input ref="fileUpload" type="file" accept="image/png" hidden @change="getFile" />
+          <SharedTerminalLogo
+            :logo="userAuth?.avatarFile?.url ? userAuth?.avatarFile?.url : undefined"
+            size="large"
+          />
+        </div>
+      </template>
+    </ui-FloatButton>
+  </div> -->
     <!-- <ui-InlineMessage
       v-if="userId?.transaction_ban || userId?.is_suspend"
       type="negative"

@@ -16,10 +16,7 @@ useHead({
   titleTemplate: title =>
     title ? ` ${t('_common.app_name')} | ${title}` : `${t('_common.app_name')}`,
 });
-const store = useTerminalStore();
 const { isFromApp } = useFromAppRoute();
-
-store.logoVersion = new Date().getTime();
 </script>
 
 <style lang="scss">

@@ -3,7 +3,6 @@
     <div class="flex justify-between items-center">
       <ui-Button
         :text="$t('_common.buttons.add_session')"
-        :disabled="disableCreateButton"
         variant="outlined"
         type="tertiary"
         @click="emit('click-button')"
@@ -19,16 +18,10 @@
 </template>
 
 <script lang="ts" setup>
-import { TerminalStatusEnum } from '@/graphql/graphql';
-
 interface Props {
   hasCaption: boolean;
   loading: boolean;
 }
 defineProps<Props>();
 const emit = defineEmits(['click-button']);
-const { activeTerminal } = useTerminalQuery();
-const disableCreateButton = computed(
-  () => activeTerminal.value?.status !== TerminalStatusEnum.Active
-);
 </script>

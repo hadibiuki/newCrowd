@@ -9,7 +9,7 @@
         v-model="otp"
         :loading="loading"
         :helper="handler"
-        :codeLength="codeLength"
+        :code-length="codeLength"
         name="otp"
         class="w-full !justify-between"
         @update:model-value="verifyOtp"
@@ -78,7 +78,7 @@ const resendOtp = () => {
   emit('resend');
 };
 const { start, timer, formattedTime, reset } = useCountDown('otp', remaining.value, () => {
-  console.log({remaining:remaining.value})
+  console.log({ remaining: remaining.value });
   // emit('handleStep', ExportModalEnum.VerifyEmail);
 });
 watch(

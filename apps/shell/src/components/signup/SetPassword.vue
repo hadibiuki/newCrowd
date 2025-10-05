@@ -45,7 +45,7 @@
         :type="passwordReapetType"
         class="w-full h-[48px] my-md"
         :after-icon="passwordReapetType === 'password' ? 'EyeHidden' : 'EyeShow'"
-        @buttonAction="passwordReapetType = passwordReapetType === 'password' ? 'text' : 'password';"
+        @buttonAction="passwordReapetType = passwordReapetType === 'password' ? 'text' : 'password'"
       />
 
       <ui-TextField
@@ -76,7 +76,6 @@
 </template>
 
 <script lang="ts" setup>
-// eslint-disable-next-line vue/require-prop-types
 defineProps<{
   loading: boolean;
 }>();
@@ -127,10 +126,9 @@ const selectedFind = (item: Record<string, string>) => {
   howToFindZarinCrowd.value = item.id;
 };
 const sendFormInfo = () => {
-  console.log({xxx:password.value})
-  console.log({passwordReapet:passwordReapet.value})
+  console.log({ xxx: password.value });
+  console.log({ passwordReapet: passwordReapet.value });
 
-  
   if (password.value !== passwordReapet.value) {
     $notify({
       isRead: false,

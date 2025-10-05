@@ -107,7 +107,6 @@ const fetch = async () => {
     const res = await getOperatorListsApi();
     operators.value = res.data.items;
   } catch (err) {
-    // eslint-disable-next-line no-console
     $notify({
       isRead: false,
       message: err.message,
@@ -118,7 +117,6 @@ const fetch = async () => {
 const eventHandler = (event: MouseEvent, item: object) => {
   eventType.value = { event: event.type, uniqueId: item.id };
 };
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let idSelected = '';
 const showConfirm = ref(false);
 const callbackAction = (id: string) => {
@@ -127,7 +125,7 @@ const callbackAction = (id: string) => {
 };
 const handleConfirm = () => {
   loading.value = true;
-  // eslint-disable-next-line promise/catch-or-return, promise/always-return
+  // eslint-disable-next-line promise/catch-or-return
   deletOperatorApi(idSelected)
     // eslint-disable-next-line promise/always-return
     .then(() => {

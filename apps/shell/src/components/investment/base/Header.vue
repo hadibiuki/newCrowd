@@ -1,7 +1,9 @@
 <template>
-  <ui-PageHeading title="فرصت های سرمایه‌گذاری" :loading="loading"
-  has-back
-  @back-roll="$router.back()"
+  <ui-PageHeading
+    title="فرصت های سرمایه‌گذاری"
+    :loading="loading"
+    has-back
+    @back-roll="$router.back()"
   >
     <template #action>
       <div class="w-fit flex gap-xs">

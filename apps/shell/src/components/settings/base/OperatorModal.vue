@@ -81,10 +81,9 @@ const checkuserPhone = () => {
   loading.value = true;
   // eslint-disable-next-line promise/catch-or-return
   getSearchUserByPhoneApi(phone.value)
-    // eslint-disable-next-line promise/always-return
     .then(res => {
       // eslint-disable-next-line promise/always-return
-      const temp =  res?.data?.items?.at(0) 
+      const temp = res?.data?.items?.at(0);
       user.value = temp;
       modalType.value = 'info';
       summaryItems.value = [
@@ -100,10 +99,10 @@ const checkuserPhone = () => {
         },
         {
           id: 3,
-          title:'احراز هویت',
-          status:{
-            type:getStetus(temp.sejamStatus),
-            text:getText(temp.sejamStatus),
+          title: 'احراز هویت',
+          status: {
+            type: getStetus(temp.sejamStatus),
+            text: getText(temp.sejamStatus),
           },
         },
       ];

@@ -133,11 +133,11 @@ const showCardPan = () => {
   isCardPan.value = true;
   emit('isCardCheck', { pan: isCardPan.value, iban: isIban.value });
 };
-const showIban = () => {
-  isIban.value = true;
-  isCardPan.value = false;
-  emit('isCardCheck', { pan: isCardPan.value, iban: isIban.value });
-};
+// const showIban = () => {
+//   isIban.value = true;
+//   isCardPan.value = false;
+//   emit('isCardCheck', { pan: isCardPan.value, iban: isIban.value });
+// };
 const normalizePan = (value: string) => {
   const character = toEnNumber(value);
   const val = replace(character, /\D/g, '');

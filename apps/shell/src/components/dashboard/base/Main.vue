@@ -21,7 +21,7 @@
         </template>
         <template #main>
           <ui-skeleton :loading="mainLoading" :height="350" :width="0">
-            <div class="grid grid-cols-2 rounded-sm mt-xl gap-xs" v-if="projects.length">
+            <div v-if="projects.length" class="grid grid-cols-2 rounded-sm mt-xl gap-xs">
               <SharedProductCard v-for="project in projects" :key="project.id" :project="project" />
             </div>
             <div v-else class="flex jsutify-content items-center h-full">
@@ -189,10 +189,9 @@ const t = useI18n();
 const store = useSessionStore();
 const router = useRouter();
 const { md } = useSize();
-const domain = useTerminalStore().currentDomain;
 const { numberFormat } = useMath();
 const navigateRoute = (page: 'session' | 'reconciliation') => {
-  router.push('/panel/' + domain + `/${page}`);
+  router.push(`/panel/${page}`);
 };
 const mainLoading = computed(
   () => projectLoading.value || store.loading || summeryLoading.value || whithdrawLoading.value
@@ -208,7 +207,7 @@ const summeryLoading = ref(false);
 const banckAccounts = ref([]);
 const loadingCheck = ref(false);
 onMounted(() => {
-  // eslint-disable-next-line promise/catch-or-return, promise/always-return
+  // eslint-disable-next-line promise/catch-or-return
   getAllProjects({ pageSize: 2, pageNumber: 1, internalStatus: 2 })
     // eslint-disable-next-line promise/always-return
     .then(res => {
@@ -253,12 +252,11 @@ const getWalletAmount = () => {
       whithdrawLoading.value = false;
     });
 };
-
 const showWalletModal = ref(false);
 const openWalletModal = () => {
   showWalletModal.value = true;
 };
-const withdrawRequstHandler = (data) =>{
+const withdrawRequstHandler = data => {
   loadingCheck.value = true;
   // eslint-disable-next-line promise/catch-or-return
   sendWithdrawRequestApi(data)
@@ -274,7 +272,7 @@ const withdrawRequstHandler = (data) =>{
       showWalletModal.value = false;
     })
     .catch(err => {
-      console.log({err})
+      console.log({ err });
       $notify({
         isRead: false,
         message: err.message,

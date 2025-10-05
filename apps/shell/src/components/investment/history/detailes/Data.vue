@@ -61,7 +61,11 @@
               درصد پیشرفت طرح
             </span>
             <div class="text-body-500-b3 flex w-full">
-              %{{ Number.isInteger(Number(data.projectProgressPercent)) ? Number(data.projectProgressPercent) :  Number.parseFloat(data.projectProgressPercent).toFixed(2) }} 
+              %{{
+                Number.isInteger(Number(data.projectProgressPercent))
+                  ? Number(data.projectProgressPercent)
+                  : Number.parseFloat(data.projectProgressPercent).toFixed(2)
+              }}
               <span class="text-[10px] text-text-soft">
                 (پیشرفت شناوری : {{ Math.min(data.projectFloatingProgressPercent, 100) }} % )
               </span>
@@ -78,7 +82,9 @@
           <div class="referral__bottom--content--item border-t border-border-divider">
             <ui-Skeleton v-if="loading" />
             <ui-Skeleton v-if="loading" :width="240" :height="24" class="mt-md" />
-            <span v-if="!loading" class="text-body-400-b3 text-text-soft ml-auto"> گواهی مشارکت </span>
+            <span v-if="!loading" class="text-body-400-b3 text-text-soft ml-auto">
+              گواهی مشارکت
+            </span>
             <a
               :href="data.participantReportFilePath"
               target="_blank"

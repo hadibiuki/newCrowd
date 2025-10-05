@@ -3,8 +3,8 @@
     size="2xl"
     class="setting-add-header"
     title="تنظیمات حساب حقوقی"
-    @back-roll="$router.back()"
     has-back
+    @back-roll="$router.back()"
   />
 </template>
 <script lang="ts" setup></script>
@@ -17,6 +17,3 @@
   }
 }
 </style>
-
-
-

@@ -100,7 +100,13 @@
                     v-if="bankInformation?.english_name"
                     class="h-[40px] w-[40px] border border-border-soft bg-surface-soft rounded-md p-xs"
                   >
-                    <ui-BankLogo :name="bankInformation.english_name.charAt(0).toUpperCase() + bankInformation.english_name.slice(1)" class="w-[24px] h-[24px]" />
+                    <ui-BankLogo
+                      :name="
+                        bankInformation.english_name.charAt(0).toUpperCase() +
+                        bankInformation.english_name.slice(1)
+                      "
+                      class="w-[24px] h-[24px]"
+                    />
                   </div>
                   <ui-Avatar v-else shape="square" type="Box" />
                   <div class="flex flex-col gap-2xs">
@@ -211,7 +217,7 @@ const { schema } = useBankSchema({ isCardPan });
 const { errors, meta } = useForm({
   validationSchema: schema,
 });
-const loading = ref(false)
+const loading = ref(false);
 const { isShare, selectedBankAccount } = toRefs(props);
 const showAlertChecking = ref(false);
 const disableSubmitButton = ref(false);

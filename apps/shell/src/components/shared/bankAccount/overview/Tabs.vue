@@ -93,7 +93,10 @@
                     >
                       <ui-BankLogo
                         v-if="i?.bankInformation"
-                        :name="i.bankInformation.english_name.charAt(0).toUpperCase() + i.bankInformation.english_name.slice(1)"
+                        :name="
+                          i.bankInformation.english_name.charAt(0).toUpperCase() +
+                          i.bankInformation.english_name.slice(1)
+                        "
                         class="w-[24px] h-[24px]"
                       />
                     </div>
@@ -124,7 +127,7 @@
                 <div class="tableCard__main--title__title">
                   <ui-Skeleton v-if="loading" :width="40" :height="20" />
                   <template v-else-if="!loading && i?.bankInformation?.name">
-                    {{ replace(i?.bankInformation?.name, 'بانک', '') }} 
+                    {{ replace(i?.bankInformation?.name, 'بانک', '') }}
                   </template>
                 </div>
               </div>
@@ -153,16 +156,12 @@
 <script setup lang="ts">
 import { replace } from 'lodash';
 import { BankAccount, BankAccountTypeEnum } from '@/graphql/graphql';
-import {
-  BankAccountStatusEnum,
-  useBankAccountStatus,
-} from '@/composables/bank/useBankAccountStatus';
-import { setCartAsLegualDefaultApi } from '~/restApi/bancAccount';
-// eslint-disable-next-line vue/valid-define-props
+import { useBankAccountStatus } from '@/composables/bank/useBankAccountStatus';
+
 const { getStatusInfo } = useBankAccountStatus();
 const store = useBankAccountStore();
 const selectedIban = ref();
-const isUserBankAccount = inject('isUserBankAccount');
+inject('isUserBankAccount');
 interface TabItem {
   label: string;
   meta: string;
@@ -183,7 +182,7 @@ const filteredData = computed(() => props.data);
 const selectedBank = ref();
 const tab = ref<BankAccountTypeEnum>(linkValue.value);
 const emit = defineEmits(['select', 'change-tab', 'clear']);
-const selectedBankHandler = (item: BankAccount) => {
+const selectedBankHandler = () => {
   emit('select', selectedBank.value);
 };
 onMounted(() => {

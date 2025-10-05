@@ -35,7 +35,6 @@
 </template>
 
 <script lang="ts" setup>
-// eslint-disable-next-line vue/require-prop-types
 defineProps<{
   loading: boolean;
 }>();

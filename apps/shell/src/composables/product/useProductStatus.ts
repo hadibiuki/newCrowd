@@ -1,3 +1,5 @@
+import { ProductInternalStatusEnum } from '~/consts/product';
+
 export function useProductStatus() {
   const t = useI18n();
   const getProductStatusInfo = (value: ProductInternalStatusEnum) => {

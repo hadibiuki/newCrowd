@@ -21,12 +21,12 @@
           />
           <span v-if="item.open && store.navigateState">
             <div
-              v-for="(child,index) in item.children"
+              v-for="(child, index) in item.children"
               :key="child.name"
               :ref="child.active ? child.name : undefined"
             >
               <NuxtLink
-                :to="{ path: `/panel/${terminalStore.currentDomain}/${child.name}` }"
+                :to="{ path: `/panel/${child.name}` }"
                 class="mb-xs block relative"
                 :class="{
                   'active-item': activeRoute(child.name),
@@ -54,11 +54,7 @@
         </div>
         <NuxtLink
           v-else
-          :to="
-            item.children
-              ? undefined
-              : { path: `/panel/${terminalStore.currentDomain}/${item.name}` }
-          "
+          :to="item.children ? undefined : { path: `/panel/${item.name}` }"
           class="mb-xs block relative"
           :class="{
             'active-item': activeRoute(item.name),
@@ -103,14 +99,14 @@
         </NuxtLink>
       </div>
     </div>
-    <ui-Divider v-if="!terminalLoading && showDivider" class="mb-md mx-md" />
+    <ui-Divider v-if="showDivider" class="mb-md mx-md" />
     <!-- footerList -->
     <div class="mx-md" dir="ltr">
       <template v-for="item in footerList" :key="item.label">
         <NuxtLink
           v-if="item.active"
           :to="{
-            path: `/panel/${terminalStore.currentDomain}/${item.name}`,
+            path: `/panel/${item.name}`,
           }"
           class="relative"
           :class="{ 'active-item': activeRoute(item.name) }"
@@ -148,11 +144,7 @@
 </template>
 
 <script setup lang="ts">
-import { useTerminalQuery } from '@/composables/terminal/useTerminalQuery';
 import { TerminalPermissionEnum } from '@/graphql/graphql';
-const emit = defineEmits(['complete']);
-const { activeTerminal, loading: terminalLoading, onResult } = useTerminalQuery();
-const terminalStore = useTerminalStore();
 const store = useNavigateStore();
 const t = useI18n();
 const authStore = useAuthStore();
@@ -246,19 +238,12 @@ const activeRoute = (name: string) => {
     return _includes(route.name, name);
   }
 };
-const showDivider = computed(() =>
-  _includes(activeTerminal.value?.permissions, TerminalPermissionEnum.TerminalEdit)
-);
-onResult(() => {
-  emit('complete');
-});
 const onClickMenuItem = (item: MenuItem) => {
   if (item.disabled) {
     return;
   }
   store.toggleNavigatorInSidebar();
 };
-
 </script>
 
 <style lang="scss" scoped>

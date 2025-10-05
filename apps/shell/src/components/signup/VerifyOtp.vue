@@ -75,7 +75,6 @@ const props = withDefaults(defineProps<Props>(), {
 const password = ref('');
 const { remaining, isLoadingVerify, loading, hasPassword } = toRefs(props);
 const step = ref(hasPassword.value ? 'password' : 'otp');
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const emit = defineEmits(['verified', 'edit', 'resendOtp', 'changeotp', 'submit']);
 // const t = useI18n();
 // const { $notify } = useNuxtApp();

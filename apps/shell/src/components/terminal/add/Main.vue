@@ -67,7 +67,7 @@ const callOtpHandler = () => {
         showTemplateOtp.value = true;
       }
     })
-    // eslint-disable-next-line n/handle-callback-err
+
     .catch(err => {
       $notify({
         isRead: false,
@@ -133,10 +133,10 @@ const checkOtpHandler = (code: string) => {
       });
       loading.value = false;
     })
-    .finally(()=>{
+    .finally(() => {
       loading.value = false;
-    })
-}
+    });
+};
 </script>
 <style scoped lang="scss">
 :deep(.domain .input__inner__unit),

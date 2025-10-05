@@ -29,57 +29,43 @@
       </div>
     </div>
     <div class="p-md flex flex-col md:flex-row justify-end">
-      <div class="w-1/2 min-w-[50%] text-text-soft text-body-400-b3 font-medium">
-        شناسه ملی
-      </div>
+      <div class="w-1/2 min-w-[50%] text-text-soft text-body-400-b3 font-medium">شناسه ملی</div>
       <div class="lg:w-1/2 truncate">
         {{ userAuth?.nationalCode }}
       </div>
     </div>
     <div class="p-md flex justify-end flex-col md:flex-row">
-      <div class="w-1/2 text-text-soft text-body-400-b3 font-medium">
-        شماره ثبت
-      </div>
+      <div class="w-1/2 text-text-soft text-body-400-b3 font-medium">شماره ثبت</div>
       <div class="w-1/2">
         {{ userAuth?.registrationCode }}
       </div>
     </div>
     <div class="p-md flex justify-end flex-col md:flex-row">
-      <div class="w-1/2 min-w-[50%] text-text-soft text-body-400-b3 font-medium">
-        تاریخ ثبت
-      </div>
+      <div class="w-1/2 min-w-[50%] text-text-soft text-body-400-b3 font-medium">تاریخ ثبت</div>
       <div class="lg:w-1/2 truncate">
         {{ userAuth?.createdDate }}
       </div>
     </div>
     <div class="p-md flex flex-col md:flex-row justify-end">
-      <div class="w-1/2 min-w-[50%] text-text-soft text-body-400-b3 font-medium">
-        ایمیل
-      </div>
+      <div class="w-1/2 min-w-[50%] text-text-soft text-body-400-b3 font-medium">ایمیل</div>
       <div class="lg:w-1/2 truncate">
         {{ userAuth?.email }}
       </div>
     </div>
     <div class="p-md flex justify-end flex-col md:flex-row">
-      <div class="w-1/2 text-text-soft text-body-400-b3 font-medium">
-        کد اقتصادی
-      </div>
+      <div class="w-1/2 text-text-soft text-body-400-b3 font-medium">کد اقتصادی</div>
       <div class="w-1/2">
         {{ userAuth?.economicCode }}
       </div>
     </div>
     <div class="p-md flex justify-end flex-col md:flex-row">
-      <div class="w-1/2 min-w-[50%] text-text-soft text-body-400-b3 font-medium">
-        کد بورسی شرکت
-      </div>
+      <div class="w-1/2 min-w-[50%] text-text-soft text-body-400-b3 font-medium">کد بورسی شرکت</div>
       <div class="lg:w-1/2 truncate">
         {{ userAuth?.bourseCode }}
       </div>
     </div>
     <div class="p-md flex flex-col md:flex-row justify-end">
-      <div class="w-1/2 min-w-[50%] text-text-soft text-body-400-b3 font-medium">
-        نام نمایشی
-      </div>
+      <div class="w-1/2 min-w-[50%] text-text-soft text-body-400-b3 font-medium">نام نمایشی</div>
       <div class="lg:w-1/2 truncate">
         {{ userAuth?.nickName }}
       </div>
@@ -163,7 +149,6 @@ const isValidLogo = async (file: File) => {
   return true;
 };
 const getFile = async (e: Event) => {
-  // eslint-disable-next-line no-console
   const target = e.target as HTMLInputElement;
   const file = target.files as unknown as File[];
   if (!file.length) {
@@ -199,7 +184,7 @@ async function uploadFileHandler(file: File) {
   // this.files.forEach((file, index) => {
   formData.append('file', file);
   formData.append('type', 'USER_AVATAR');
-  // eslint-disable-next-line promise/catch-or-return, promise/always-return
+
   uploadFileApi(formData);
 
   return true;

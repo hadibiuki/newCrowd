@@ -11,7 +11,7 @@
           :model-value="dateInput"
           :disabled="loading"
           :loading="false"
-          :steps="['year' , 'month']"
+          :steps="['year', 'month']"
           name="calender"
           max
           :placeholder="$t('_common.filters.date')"
@@ -24,9 +24,7 @@
         <div class="col-span-3 lg:col-span-1 flex flex-col justify-center items-center p-md gap-sm">
           <ui-Skeleton v-if="loading" :width="80" :height="20" />
           <span v-else class="text-body-400-b3 text-text-soft">
-            {{
-              $t('_common.balance_to_get')
-            }}
+            {{ $t('_common.balance_to_get') }}
           </span>
           <ui-Skeleton v-if="loading" :height="30" class="mt-md" />
           <span v-else class="flex gap-xs items-center">
@@ -34,7 +32,9 @@
             <ui-Label :text="$t('_common.currency.rial')" type="neutral" class="mx-xs h-fit" />
           </span>
         </div>
-        <div class="col-span-3 lg:col-span-1 flex flex-col justify-center items-center p-md gap-sm md:border-r border-r-0 border-t md:border-t-0 border-border-divider">
+        <div
+          class="col-span-3 lg:col-span-1 flex flex-col justify-center items-center p-md gap-sm md:border-r border-r-0 border-t md:border-t-0 border-border-divider"
+        >
           <ui-Skeleton v-if="loading" :width="80" :height="20" />
           <span v-else class="text-body-400-b3 text-text-soft">
             {{
@@ -45,7 +45,9 @@
           </span>
           <ui-Skeleton v-if="loading" :height="30" class="mt-md" />
           <span v-else class="flex gap-xs items-center">
-            <span class="text-display-700-d3">{{ referralStatistics?.filteredDateProfitAmount }}</span>
+            <span class="text-display-700-d3">{{
+              referralStatistics?.filteredDateProfitAmount
+            }}</span>
             <ui-Label :text="$t('_common.currency.rial')" type="neutral" class="mx-xs h-fit" />
           </span>
         </div>
@@ -76,19 +78,16 @@
             <span>{{ $t('common.rial') }}</span>
           </span>
         </span>
-        <span v-else-if="!lastInvoice && !loading">-</span>
+        <span v-else-if="!lastInvoice">-</span>
         <ui-Skeleton v-if="loading" :height="20" />
       </div>
-     
     </template>
   </ui-Card>
 </template>
 <script lang="ts" setup>
-import moment from 'moment-jalaali';
-import { ReferrerInvoiceType } from '@/graphql/graphql';
 import { getUserReferralStatisticsApi } from '~/restApi/referral';
 
-defineProps(['loading'])
+defineProps(['loading']);
 export interface Date {
   formatValue: string;
   month: string;
@@ -110,46 +109,14 @@ const calendar = ref<Calendar>({
   monthIncome: 0,
   totalIncome: 0,
 });
-const dataParam = ref({
-  fromDate: '',
-  toDate: '',
-});
-const showModal = ref(false);
-const { fullDateJalali, toJalali } = useDate();
+const { toJalali } = useDate();
 const { numberFormat } = useMath();
-const showDialog = () => (showModal.value = true);
 const dateHandler = (date: Date) => {
   dateInput.value = date.formatValue;
   calendar.value.month = date.month;
   calendar.value.year = date.year;
-  getImcomeStaitstics(date.formatValue)
+  getImcomeStaitstics(date.formatValue);
 };
-const invoiceTableData = computed(() => {
-  if (data.value && data.value.length) {
-    if (dataParam.value.fromDate) {
-      const filteredInvoice = data.value.filter(
-        (invoice: ReferrerInvoiceType) =>
-          moment(invoice.from_date).isSameOrAfter(dataParam.value.fromDate) &&
-          moment(invoice.to_date).isSameOrBefore(dataParam.value.toDate)
-      );
-
-      return filteredInvoice.map((item: ReferrerInvoiceType) => ({
-        from_date: (item.from_date && fullDateJalali(item.from_date)) ?? '-',
-        amount: (item.amount && numberFormat(item.amount)) ?? '-',
-        status: item.status,
-      }));
-    }
-
-    return data.value.map((item: ReferrerInvoiceType) => ({
-      from_date: (item.from_date && fullDateJalali(item.from_date)) ?? '-',
-      amount: (item.amount && numberFormat(item.amount)) ?? '-',
-      status: item.status,
-    }));
-  }
-
-  return [];
-});
-
 const lastInvoice = computed(() => {
   if (data.value && data.value.length) {
     return {
@@ -161,23 +128,15 @@ const lastInvoice = computed(() => {
   return undefined;
 });
 
-const changeYear = (val: string) => {
-  if (val !== 'Invalid date') {
-    const year = +val + 1;
-    dataParam.value.fromDate = moment(`${val}-03-01`, 'YYYY-MM-DD').format('YYYY-MM-DD');
-    dataParam.value.toDate = moment(`${year}-03-30`, 'YYYY-MM-DD').format('YYYY-MM-DD');
-  }
-};
 onMounted(() => {
-  getImcomeStaitstics()
-  
+  getImcomeStaitstics();
 });
-const data = ref([])
-const referralStatistics = ref({})
-const getImcomeStaitstics = (filteredDate: string | null = null ) => {
+const data = ref([]);
+const referralStatistics = ref({});
+const getImcomeStaitstics = (filteredDate: string | null = null) => {
   // eslint-disable-next-line promise/catch-or-return, promise/always-return
   getUserReferralStatisticsApi(filteredDate).then(res => {
-    referralStatistics.value = res.data
+    referralStatistics.value = res.data;
     // data.value = res.data
   });
 };

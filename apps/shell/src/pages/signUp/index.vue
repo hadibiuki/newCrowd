@@ -177,10 +177,12 @@ const getDescription = computed(() => {
         return 'برای ورود رمز عبور خود را وارد کنید';
       }
 
+      // eslint-disable-next-line no-irregular-whitespace
       return `رمز یکبار مصرف پیامک شده به شماره  ${userPhoneNumber}  را وارد کنید`;
     case Steps.SSN:
       return 'برای ساخت حساب کد ملی خود را وارد کنید';
     case Steps.NOACCOUNT:
+      // eslint-disable-next-line no-irregular-whitespace
       return `رمز یکبار مصرف پیامک شده به شماره  ${userPhoneNumber}  را وارد کنید`;
     case Steps.SEJAM:
       return 'رمز یکبار مصرف ۶ رقمی پیامک شده به شماره ثبت شده درسامانه سجام را وارد کنید';
@@ -195,12 +197,11 @@ const getDescription = computed(() => {
 // ************* step PHONE
 const sendPhoneNumberHandler = (phone: string) => {
   loading.value = true;
-  // eslint-disable-next-line promise/catch-or-return, promise/always-return
+  // eslint-disable-next-line promise/catch-or-return
   signUpSendPhonNumberApi({ phoneNumber: phone })
-    // eslint-disable-next-line promise/always-return
     .then(res => {
       userPhoneNumber = phone;
-      // eslint-disable-next-line no-console
+
       const temp = res.data;
       hasAccount = temp.hasAccount;
       hasPassword = temp.hasPassword;
@@ -311,7 +312,6 @@ const verifiedOtpNoAccountHandler = (otp: string) => {
     accountId,
     otp,
   })
-    // eslint-disable-next-line promise/always-return
     .then(res => {
       const registrationStep = res.data.authenticationStep;
       // eslint-disable-next-line promise/always-return
@@ -355,7 +355,6 @@ const sentSsnHandler = (ssn: string) => {
     accountId,
     nationalCode: ssn,
   })
-    // eslint-disable-next-line promise/always-return
     .then(res => {
       // eslint-disable-next-line promise/always-return
       if (res.data.hasSejam) {
@@ -438,8 +437,6 @@ const getAllInformationData = (data: object) => {
   showTemplateModal.value = true;
 };
 const sentHoleData = () => {
-  // eslint-disable-next-line promise/catch-or-return
-  // eslint-disable-next-line promise/catch-or-return, promise/always-return
   loading.value = true;
   // eslint-disable-next-line promise/catch-or-return
   completeUserRegistrationApi(

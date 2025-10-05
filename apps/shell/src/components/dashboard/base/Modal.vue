@@ -21,7 +21,9 @@
             <ui-Label :text="$t('_common.currency.rial')" type="neutral" class="mr-xs" />
           </div>
         </div>
-        <span class="text-caption-400-c1 text-text-soft mb-md flex">{{ $t('transactions.amount_assets') }}</span>
+        <span class="text-caption-400-c1 text-text-soft mb-md flex">{{
+          $t('transactions.amount_assets')
+        }}</span>
         <div class="mb-md flex gap-md pl-[1px]" dir="ltr">
           <ui-RadioCard
             v-model="item"
@@ -51,12 +53,16 @@
             @click="changeOptionStatusHandler"
           >
             <div class="flex flex-col rtl">
-              <span class="text-body-500-b2 font-bold flex mb-xs">{{ $t('transactions.total_assets') }}</span>
-              <span class="text-caption-400-c1 text-text-soft">{{ whithdraw?.withdrawableAmount ?? 0 }} ریال</span>
+              <span class="text-body-500-b2 font-bold flex mb-xs">{{
+                $t('transactions.total_assets')
+              }}</span>
+              <span class="text-caption-400-c1 text-text-soft"
+                >{{ whithdraw?.withdrawableAmount ?? 0 }} ریال</span
+              >
             </div>
           </ui-RadioCard>
         </div>
-        <div class="mb-md flex flex-col" v-if="item === 'some'">
+        <div v-if="item === 'some'" class="mb-md flex flex-col">
           <ui-TextField
             v-model="amount"
             amount
@@ -67,7 +73,9 @@
             :placeholder="t('transactions.amount_assets')"
             :helper="{
               type: 'info',
-              message: `مبلغ برداشت می‌تواند برابر با کل موجودی دارایی (${numberFormat(whithdraw.withdrawableAmount || 0)} ریال) یا کمتر باشد`,
+              message: `مبلغ برداشت می‌تواند برابر با کل موجودی دارایی (${numberFormat(
+                whithdraw.withdrawableAmount || 0
+              )} ریال) یا کمتر باشد`,
             }"
             @update:model-value="updateAmountHandler"
           />
@@ -87,11 +95,11 @@
         />
         <div class="ltr flex-col flex">
           <ui-Textarea
+            v-model="description"
             class="w-full float-right"
             :max-length="500"
             :disabled="loadingCheck"
             name="content"
-            v-model="description"
             :placeholder="$t('_common.table.description')"
           />
         </div>
